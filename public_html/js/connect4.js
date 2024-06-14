@@ -22,7 +22,62 @@ function getCanvas() {
     return canvas;
 };
 
+class ConnectFourBoard {
+    static #ROWS = 6;
+    static #COLUMNS = 7;
+    static #VICTORY_LENGTH = 4;
+    
+    #boardData;
+    
+    constructor(other) {
+        if (arguments.length === 1) {
+            this.#boardData = [...other.#boardData];
+        } else {
+            this.#boardData = Array(ConnectFourBoard.#ROWS *
+                                    ConnectFourBoard.#COLUMNS);
+        }
+    }
+    
+    toString() {
+        let str = "";
+        
+        for (let y = 0; y < ConnectFourBoard.#ROWS; y++) {
+            for (let x = 0; x < ConnectFourBoard.#COLUMNS; x++) {
+                str += "|";
+                str += this.#getCellChar(this.#get(x, y));
+            }
+            
+            str += "|\n";
+        }
+        
+        str += "+-+-+-+-+-+-+-+\n";
+        str += " 1 2 3 4 5 6 7";
+        
+        return str;
+    }
+    
+    #get(x, y) {
+        return this.#boardData[y * ConnectFourBoard.#COLUMNS + x];
+    }
+    
+    #getCellChar(cellCharacter) {
+        switch (cellCharacter) {
+            case X:
+                return "X";
+                
+            case O:
+                return "O";
+                
+            default:
+                return " ";
+        }
+    }
+};
+
 (function() {
+    
+    const obj = new ConnectFourBoard();
+    console.log(obj.toString());
     
     function paintBoard(canvas) {
         
