@@ -112,6 +112,82 @@ class ConnectFourBoard {
         }
     }
     
+    getWinningPattern() {
+        if (!this.isWinningFor(X) &&
+            !this.isWinningFor(O)) {
+            return null;
+        }
+        
+        let winningPattern = null;
+        
+        for (let length = ROWS; length >= #VICTORY_LENGTH; length--) {
+        
+            // Try load the vertical winning pattern:
+            winningPattern = 
+                    tryLoadVerticalWinningPattern(X, length);
+
+            if (winningPattern !== null) {
+                return winningPattern;
+            }
+        
+            winningPattern = 
+                    tryLoadVerticalWinningPattern(O, length);
+
+            if (winningPattern !== null) {
+                return winningPattern;
+            }
+            
+            // Try to load the ascending winning pattern:
+            winningPattern =
+                tryLoadAscendingWinningPattern(X, length);
+        
+            if (winningPattern !== null) {
+                return winningPattern;
+            }
+            
+            winningPattern =
+                tryLoadAscendingWinningPattern(O, length);
+        
+            if (winningPattern !== null) {
+                return winningPattern;
+            }
+
+            // Try to load the descending winning pattern:
+            winningPattern = 
+                    tryLoadDescendingWinningPattern(X, length);
+
+            if (winningPattern !== null) {
+                return winningPattern;
+            }
+
+            winningPattern = 
+                    tryLoadDescendingWinningPattern(O, length);
+            
+            if (winningPattern !== null) {
+                return winningPattern;
+            }
+        }
+
+        for (let length = COLUMNS; length >= #VICTORY_LENGTH; length--) {
+            
+            winningPattern = 
+                    tryLoadHorizontalWinningPattern(X, length);
+            
+            if (winningPattern !== null) {
+                return winningPattern;
+            }
+            
+            winningPattern = 
+                    tryLoadHorizontalWinningPattern(O, length);
+            
+            if (winningPattern !== null) {
+                return winningPattern;
+            }
+        }
+        
+        throw "Should not get here.";
+    }
+    
     hasHorizontalStreak(playerType, length) {
         const lastX = COLUMNS - length;
         
