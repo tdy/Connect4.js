@@ -40,6 +40,9 @@ class ConnectFourBoard {
                 
             case EMPTY:
                 return " ";
+                
+            default:
+                throw "Should not get here.";
         }
     }
     
@@ -84,7 +87,7 @@ class ConnectFourBoard {
     
     isTie() {
         for (let x = 0; x < COLUMNS; x++) {
-            if (!get(x, 0)) {
+            if (this.get(x, 0) === EMPTY) {
                 return false;
             }
         }
@@ -94,8 +97,8 @@ class ConnectFourBoard {
     
     makePly(x, playerType) {
         for (let y = ROWS - 1; y >= 0; y--) {
-            if (!get(x, y)) {
-                set(x, y, playerType);
+            if (this.get(x, y) === EMPTY) {
+                this.set(x, y, playerType);
                 return true;
             }
         }
@@ -105,11 +108,17 @@ class ConnectFourBoard {
     
     unmakePly(x) {
         for (let y = 0; y < ROWS; y++) {
-            if (get(x, y)) {
-                set(x, y, undefined);
+            if (this.get(x, y) !== EMPTY) {
+                this.set(x, y, EMPTY);
                 return;
             }
         }
+    }
+    
+    isTerminal() {
+        return this.isWinningFor(O) ||
+               this.isWinningFor(X) ||
+               this.isTie();
     }
     
     getWinningPattern() {
@@ -120,7 +129,7 @@ class ConnectFourBoard {
         
         let winningPattern = null;
         
-        for (let length = ROWS; length >= #VICTORY_LENGTH; length--) {
+        for (let length = ROWS; length >= ConnectFourBoard.#VICTORY_LENGTH; length--) {
         
             // Try load the vertical winning pattern:
             winningPattern = 
@@ -168,7 +177,7 @@ class ConnectFourBoard {
             }
         }
 
-        for (let length = COLUMNS; length >= #VICTORY_LENGTH; length--) {
+        for (let length = COLUMNS; length >= ConnectFourBoard.#VICTORY_LENGTH; length--) {
             
             winningPattern = 
                     tryLoadHorizontalWinningPattern(X, length);
@@ -274,11 +283,10 @@ class ConnectFourBoard {
     }
     
     isWinningFor(playerType) {
-        return 
-           this.hasAscendingDiagonalStreak  (playerType, VICTORY_LENGTH) ||
-           this.hasDescendingDiagonalStreak (playerType, VICTORY_LENGTH) ||
-           this.hasHorizontalStreak         (playerType, VICTORY_LENGTH) ||
-           this.hasVerticalStreak           (playerType, VICTORY_LENGTH);
+        return this.hasAscendingDiagonalStreak  (playerType, ConnectFourBoard.#VICTORY_LENGTH) ||
+               this.hasDescendingDiagonalStreak (playerType, ConnectFourBoard.#VICTORY_LENGTH) ||
+               this.hasHorizontalStreak         (playerType, ConnectFourBoard.#VICTORY_LENGTH) ||
+               this.hasVerticalStreak           (playerType, ConnectFourBoard.#VICTORY_LENGTH);
     }
     
     tryLoadAscendingWinningPattern(playerType, length) {
@@ -407,21 +415,22 @@ class ConnectFourHeuristicFunction {
             return ConnectFourHeuristicFunction.#MAXIMIZING_PLAYER_VICTORY_SCORE + depth;
         }
         
-        return evaluate2(state) + evaluate3(state);
+        return this.#evaluate2(state) +
+               this.#evaluate3(state);
     }
     
     #evaluate2(state) {
-        return #evaluate2Horizontal(state) +
-               #evaluate2Vertical(state) + 
-               #evaluate2Ascending(state) +
-               #evaluate2Descending(state);
+        return this.#evaluate2Horizontal (state) +
+               this.#evaluate2Vertical   (state) + 
+               this.#evaluate2Ascending  (state) +
+               this.#evaluate2Descending (state);
     }
     
     #evaluate3(state) {
-        return #evaluate3Horizontal(state) +
-               #evaluate3Vertical(state) + 
-               #evaluate3Ascending(state) +
-               #evaluate3Descending(state);
+        return this.#evaluate3Horizontal (state) +
+               this.#evaluate3Vertical   (state) + 
+               this.#evaluate3Ascending  (state) +
+               this.#evaluate3Descending (state);
     }
     
     #evaluate2Horizontal(state) {
@@ -431,11 +440,11 @@ class ConnectFourHeuristicFunction {
             for (let x = 0; x < COLUMNS - 1; x++) {
                 if (state.get(x, y) === O &&
                     state.get(x + 1, y) === O) {
-                    sum += #TWO_BLOCKS_SCORE;
+                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
                        state.get(x + 1, y) === X) {
                     
-                    sum -= #TWO_BLOCKS_SCORE;
+                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 }
             }
         }
@@ -451,11 +460,11 @@ class ConnectFourHeuristicFunction {
                 if (state.get(x, y) === O &&
                     state.get(x, y + 1) === O) {
                     
-                    sum += #TWO_BLOCKS_SCORE;
+                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
                        state.get(x, y + 1) === X) {
                     
-                    sum -= #TWO_BLOCKS_SCORE;
+                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 }
             }
         }
@@ -470,11 +479,11 @@ class ConnectFourHeuristicFunction {
             for (let x = 0; x < COLUMNS - 1; x++) {
                 if (state.get(x, y) === O &&
                     state.get(x + 1, y - 1) === O) {
-                    sum += #TWO_BLOCKS_SCORE;
+                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
                            state.get(x + 1, y - 1) === X) {
                     
-                    sum -= #TWO_BLOCKS_SCORE;
+                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 }
             }
         }
@@ -490,11 +499,11 @@ class ConnectFourHeuristicFunction {
                 if (state.get(x, y) === O &&
                     state.get(x - 1, y - 1) === O) {
                     
-                    sum += #TWO_BLOCKS_SCORE;
+                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
                            state.get(x - 1, y - 1) === X) {
                     
-                    sum -= #TWO_BLOCKS_SCORE;
+                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 }
             }
         }
@@ -511,12 +520,12 @@ class ConnectFourHeuristicFunction {
                     state.get(x + 1, y) === O &&
                     state.get(x + 2, y) === O) {
                     
-                    sum += #THREE_BLOCKS_SCORE;
+                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
                         state.get(x + 1, y) === X &&
                         state.get(x + 2, y) === X) {
                     
-                    sum -= #THREE_BLOCKS_SCORE;
+                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
                 }
             }
         }
@@ -533,12 +542,12 @@ class ConnectFourHeuristicFunction {
                     state.get(x, y + 1) === O &&
                     state.get(x, y + 2) === O) {
                     
-                    sum += #THREE_BLOCKS_SCORE;
+                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
                         state.get(x, y + 1) === X &&
                         state.get(x, y + 2) === X) {
                     
-                    sum -= #THREE_BLOCKS_SCORE;
+                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
                 }
             }
         }
@@ -555,12 +564,12 @@ class ConnectFourHeuristicFunction {
                     state.get(x + 1, y - 1) === O &&
                     state.get(x + 2, y - 2) === O) {
                     
-                    sum += #THREE_BLOCKS_SCORE;
+                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
                         state.get(x + 1, y - 1) === X && 
                         state.get(x + 2, y - 2) === X) {
                     
-                    sum -= #THREE_BLOCKS_SCORE;
+                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
                 }
             }
         }
@@ -577,17 +586,161 @@ class ConnectFourHeuristicFunction {
                     state.get(x - 1, y - 1) === O &&
                     state.get(x - 2, y - 2) === O) {
                     
-                    sum += #THREE_BLOCKS_SCORE;
+                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
                         state.get(x - 1, y - 1) === X &&
                         state.get(x - 2, y - 2) === X) {
                     
-                    sum -= #THREE_BLOCKS_SCORE;
+                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
                 }
             }
         }
         
         return sum;
+    }
+}
+
+class ConnectFourSearchEngine {
+    #bestMoveState;
+    #heuristicFunction;
+    
+    constructor(heuristicFunction) {
+        this.#heuristicFunction = heuristicFunction;
+    }
+    
+    search(root, depth, playerType = O) {
+        this.#bestMoveState = null;
+        
+        this.#alphaBetaPruningRootImpl(root,
+                                       depth,
+                                       playerType);
+        
+        return this.#bestMoveState;
+    }
+    
+    #alphaBetaPruningRootImpl(root, depth, playerType) {
+        
+        if (playerType === O) {
+            
+            // Try to maximize the value:
+            let alpha = Number.NEGATIVE_INFINITY;
+            let value = Number.NEGATIVE_INFINITY;
+            let tentativeValue = Number.NEGATIVE_INFINITY;
+            
+            for (let x = 0; x < COLUMNS; x++) {
+                if (!root.makePly(x, O)) {
+                    continue;
+                }
+
+                value = Math.max(value,
+                                 this.#alphaBetaPruningImpl(
+                                         root,
+                                         depth - 1,
+                                         alpha,
+                                         Number.POSITIVE_INFINITY,
+                                         X));
+                
+                if (tentativeValue < value) {
+                    tentativeValue = value;
+                    this.#bestMoveState = new ConnectFourBoard(root);
+                }
+
+                root.unmakePly(x);  
+                
+                alpha = Math.max(alpha, value);
+            }
+        } else {
+            
+            let beta  = Number.POSITIVE_INFINITY;
+            let value = Number.POSITIVE_INFINITY;
+            let tentativeValue = Number.POSITIVE_INFINITY;
+            
+            for (let x = 0; x < COLUMNS; x++) {
+                if (!root.makePly(x, X)) {
+                    continue;
+                }
+
+                value = Math.min(value,
+                                 this.#alphaBetaPruningImpl(
+                                         root,
+                                         depth - 1,
+                                         Number.NEGATIVE_INFINITY,
+                                         beta,
+                                         O));
+
+                if (tentativeValue > value) {
+                    tentativeValue = value;
+                    this.#bestMoveState = new ConnectFourBoard(root);
+                }
+
+                root.unmakePly(x);
+                
+                beta = Math.min(beta, value);
+            }
+        }
+    } 
+    
+    #alphaBetaPruningImpl(state, 
+                          depth, 
+                          alpha,
+                          beta, 
+                          playerType) {
+
+        if (depth === 0 || state.isTerminal()) {
+            return heuristicFunction.evaluate(state, depth);
+        }
+        
+        if (playerType === O) {
+            let value = Number.NEGATIVE_INFINITY;
+            
+            for (let x = 0; x < COLUMNS; x++) {
+                if (!state.makePly(x, O)) {
+                    continue;
+                }
+                
+                value = Math.max(value, 
+                                 this.#alphaBetaPruningImpl(state,
+                                                            depth - 1,
+                                                            alpha,
+                                                            beta,
+                                                            X));
+                
+                state.unmakePly(x);
+                
+                if (value > beta) {
+                    break;
+                }
+                
+                alpha = Math.max(alpha, value);
+            }   
+            
+            return value;
+        } else {
+            let value = Number.POSITIVE_INFINITY;
+            
+            for (let x = 0; x < COLUMNS; x++) {
+                if (!state.makePly(x, X)) {
+                    continue;
+                }
+                
+                value = Math.min(value,
+                                 this.#alphaBetaPruningImpl(state,
+                                                            depth - 1,
+                                                            alpha,
+                                                            beta,
+                                                            O));
+                
+                state.unmakePly(x);
+                
+                if (value < alpha) {
+                    break;
+                }
+                
+                beta = Math.min(beta, value);
+            }
+            
+            return value;
+        }          
     }
 }
 
@@ -695,4 +848,43 @@ class ConnectFourHeuristicFunction {
 //    
 //    paintCells(d);
 //    console.log(window.innerWidth, window.innerHeight);
-})();
+});
+
+const heuristicFunction = new ConnectFourHeuristicFunction();
+const engine = new ConnectFourSearchEngine(heuristicFunction);
+const depth = 6;
+
+let state = new ConnectFourBoard();
+
+while (true) {
+    console.log(state.toString());
+    console.log("X's turn:");
+    
+    state = engine.search(state, depth, X);
+    
+    console.log(state.toString());
+    
+    if (state.isTie()) {
+        console.log("RESULT: It's a tie.");
+        break;
+    }
+    
+    if (state.isWinningFor(X)) {
+        console.log("RESULT: X won.");
+        break;
+    }
+    
+    console.log("O's turn:");
+    
+    state = engine.search(state, depth, O);
+    
+    if (state.isTie()) {
+        console.log("RESULT: It's a tie.");
+        break;
+    }
+    
+    if (state.isWinningFor(O)) {
+        console.log("RESULT: O won.");
+        break;
+    }
+}
