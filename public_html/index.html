@@ -7,7 +7,18 @@
         <link rel='stylesheet' type='text/css' href='css/connect4.css' />
     </head>
     <body>
-        <canvas id='canvas'></canvas>
-        <script src='js/connect4.js'></script>
+        <canvas id='canvas' width="300" height="200"></canvas>
+        <script src='js/connect4ai.js'></script>
+        <script src="js/connect4canvas.js"></script>
+        
+        <script>
+            const canvasObject = 
+                    new ConnectFourCanvas(
+                        document.getElementById('canvas'),
+                        300, 
+                        200);
+                        
+            canvasObject.render();
+        </script>
     </body>
 </html>

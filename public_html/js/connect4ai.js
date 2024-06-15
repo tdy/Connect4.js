@@ -852,7 +852,7 @@ class ConnectFourSearchEngine {
 
 const heuristicFunction = new ConnectFourHeuristicFunction();
 const engine = new ConnectFourSearchEngine(heuristicFunction);
-const depth = 8;
+const depth = 4;
 
 let state = new ConnectFourBoard();
 console.log(state.toString());
