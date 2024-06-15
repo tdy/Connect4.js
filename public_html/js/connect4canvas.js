@@ -8,7 +8,8 @@ class ConnectFourCanvas {
     static #O = 0;
     static #X = 1;
     static #EMPTY = -1;
-    static #MARGIN_RADIUS = 10;
+    static #MARGIN_RADIUS = 4;
+    static #PADDING = 15;
             
     #canvas;
     #canvasContext;
@@ -31,13 +32,28 @@ class ConnectFourCanvas {
         this.#board = board;
     }
     
+    setSize(width, height) {
+        this.#width  = width;
+        this.#height = height;
+        this.#canvasContext.canvas.width  = width;
+        this.#canvasContext.canvas.height = height;
+    }
+    
     render() {
         this.#paintBackground();
         this.#paintCells();
     }
     
     #paintBackground() {
+//        const skipLeftMarginWidth = this.#getLeftMarginWidth();
+//        const skipTopMarginHeight = this.#getTopMarginHeight();
+        
         this.#canvasContext.fillStyle = ConnectFourCanvas.#BACKGROUND_RGB_COLOR;
+//        this.#canvasContext.fillRect(skipLeftMarginWidth,
+//                                     skipTopMarginHeight + ConnectFourCanvas.#PADDING,
+//                                     this.#width - 2 * skipLeftMarginWidth,
+//                                     this.#height - 2 * skipTopMarginHeight - 
+//                                             ConnectFourCanvas.#PADDING);
         this.#canvasContext.fillRect(0,
                                      0,
                                      this.#width,
@@ -51,20 +67,42 @@ class ConnectFourCanvas {
         return effectiveCellWidth;
     }
     
+//    #getLeftMarginWidth() {
+//        const cellWidth = this.#getCellWidth();
+//        const totalWidth = this.#width;
+//        const totalCellWidths = ConnectFourCanvas.#COLUMNS * cellWidth;
+//        const leftMarginWidth = (totalWidth - totalCellWidths) / 2;
+//        return leftMarginWidth;
+//    }
+//    
+//    #getTopMarginHeight() {
+//        const cellWidth = this.#getCellWidth();
+//        const totalHeight = this.#height;
+//        const totalCellHeights = ConnectFourCanvas.#ROWS * cellWidth;
+//        const topMarginHeight = (totalHeight - totalCellHeights) / 2;
+//        return topMarginHeight;
+//    }
+    
     #paintCells() {
+//        const skipLeftMarginWidth = this.#getLeftMarginWidth();
+//        const skipTopMarginHeight = this.#getTopMarginHeight() + 
+//                                    ConnectFourCanvas.#PADDING;
+        
         for (let y = 0; y < ConnectFourCanvas.#ROWS; y++) {
             for (let x = 0; x < ConnectFourCanvas.#COLUMNS; x++) {
                 const cellValue = this.#board.get(x, y);
-                const cellRgb = getCellRGB(cellValue);
+                const cellRgb = this.#getCellRGB(cellValue);
                 
-                this.#canvasContext.fillStyle = cellRgb;
-                
-                const cellWidth = getCellWidth();
+                const cellWidth = this.#getCellWidth();
                 const centerX = x * cellWidth + cellWidth / 2;
+                      
                 const centerY = y * cellWidth + cellWidth / 2;
-                const radius = (cellWidth - ConnectFourCanvas.#MARGIN_RADIUS) / 2;
+
+                const radius = 
+                        (cellWidth - ConnectFourCanvas.#MARGIN_RADIUS) / 2;
                 
                 this.#canvasContext.beginPath();
+                this.#canvasContext.fillStyle = cellRgb;
                 this.#canvasContext.arc(centerX,
                                         centerY,
                                         radius,
@@ -80,7 +118,7 @@ class ConnectFourCanvas {
     #getCellRGB(cellValue) {
         switch (cellValue) {
             case EMPTY:
-                return "0xffffff"; // White color.
+                return "white"; 
                 
             case ConnectFourCanvas.#X:
                 return ConnectFourCanvas.#X_PLAYER_RGB_COLOR;
