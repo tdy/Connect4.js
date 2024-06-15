@@ -24,9 +24,9 @@ function getCanvas() {
 };
 
 class ConnectFourBoard {
-    static #ROWS = 6;
-    static #COLUMNS = 7;
-    static #VICTORY_LENGTH = 4;
+    static ROWS = 6;
+    static COLUMNS = 7;
+    static VICTORY_LENGTH = 4;
     
     #boardData;
         
@@ -50,8 +50,8 @@ class ConnectFourBoard {
         if (arguments.length === 1) {
             this.#boardData = [...other.#boardData];
         } else {
-            this.#boardData = Array(ConnectFourBoard.#ROWS *
-                                    ConnectFourBoard.#COLUMNS);
+            this.#boardData = Array(ConnectFourBoard.ROWS *
+                                    ConnectFourBoard.COLUMNS);
                             
             for (let i = 0, end = this.#boardData.length; i < end; i++) {
                 this.#boardData[i] = EMPTY;
@@ -60,18 +60,18 @@ class ConnectFourBoard {
     }
     
     get(x, y) {
-        return this.#boardData[y * ConnectFourBoard.#COLUMNS + x];
+        return this.#boardData[y * ConnectFourBoard.COLUMNS + x];
     }
     
     set(x, y, playerType) {
-        this.#boardData[y * ConnectFourBoard.#COLUMNS + x] = playerType;
+        this.#boardData[y * ConnectFourBoard.COLUMNS + x] = playerType;
     }
     
     toString() {
         let str = "";
         
-        for (let y = 0; y < ConnectFourBoard.#ROWS; y++) {
-            for (let x = 0; x < ConnectFourBoard.#COLUMNS; x++) {
+        for (let y = 0; y < ConnectFourBoard.ROWS; y++) {
+            for (let x = 0; x < ConnectFourBoard.COLUMNS; x++) {
                 str += "|";
                 str += this.#getCellChar(this.get(x, y));
             }
@@ -129,7 +129,7 @@ class ConnectFourBoard {
         
         let winningPattern = null;
         
-        for (let length = ROWS; length >= ConnectFourBoard.#VICTORY_LENGTH; length--) {
+        for (let length = ROWS; length >= ConnectFourBoard.VICTORY_LENGTH; length--) {
         
             // Try load the vertical winning pattern:
             winningPattern = 
@@ -177,7 +177,7 @@ class ConnectFourBoard {
             }
         }
 
-        for (let length = COLUMNS; length >= ConnectFourBoard.#VICTORY_LENGTH; length--) {
+        for (let length = COLUMNS; length >= ConnectFourBoard.VICTORY_LENGTH; length--) {
             
             winningPattern = 
                     tryLoadHorizontalWinningPattern(X, length);
@@ -283,10 +283,10 @@ class ConnectFourBoard {
     }
     
     isWinningFor(playerType) {
-        return this.hasAscendingDiagonalStreak  (playerType, ConnectFourBoard.#VICTORY_LENGTH) ||
-               this.hasDescendingDiagonalStreak (playerType, ConnectFourBoard.#VICTORY_LENGTH) ||
-               this.hasHorizontalStreak         (playerType, ConnectFourBoard.#VICTORY_LENGTH) ||
-               this.hasVerticalStreak           (playerType, ConnectFourBoard.#VICTORY_LENGTH);
+        return this.hasAscendingDiagonalStreak  (playerType, ConnectFourBoard.VICTORY_LENGTH) ||
+               this.hasDescendingDiagonalStreak (playerType, ConnectFourBoard.VICTORY_LENGTH) ||
+               this.hasHorizontalStreak         (playerType, ConnectFourBoard.VICTORY_LENGTH) ||
+               this.hasVerticalStreak           (playerType, ConnectFourBoard.VICTORY_LENGTH);
     }
     
     tryLoadAscendingWinningPattern(playerType, length) {
@@ -442,7 +442,7 @@ class ConnectFourHeuristicFunction {
                     state.get(x + 1, y) === O) {
                     sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 } else if (state.get(x, y) === X &&
-                       state.get(x + 1, y) === X) {
+                           state.get(x + 1, y) === X) {
                     
                     sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
                 }
@@ -627,7 +627,7 @@ class ConnectFourSearchEngine {
             let value = Number.NEGATIVE_INFINITY;
             let tentativeValue = Number.NEGATIVE_INFINITY;
             
-            for (let x = 0; x < COLUMNS; x++) {
+            for (let x = 0; x < ConnectFourBoard.COLUMNS; x++) {
                 if (!root.makePly(x, O)) {
                     continue;
                 }
@@ -655,7 +655,7 @@ class ConnectFourSearchEngine {
             let value = Number.POSITIVE_INFINITY;
             let tentativeValue = Number.POSITIVE_INFINITY;
             
-            for (let x = 0; x < COLUMNS; x++) {
+            for (let x = 0; x < ConnectFourBoard.COLUMNS; x++) {
                 if (!root.makePly(x, X)) {
                     continue;
                 }
@@ -693,7 +693,7 @@ class ConnectFourSearchEngine {
         if (playerType === O) {
             let value = Number.NEGATIVE_INFINITY;
             
-            for (let x = 0; x < COLUMNS; x++) {
+            for (let x = 0; x < ConnectFourBoard.COLUMNS; x++) {
                 if (!state.makePly(x, O)) {
                     continue;
                 }
@@ -718,7 +718,7 @@ class ConnectFourSearchEngine {
         } else {
             let value = Number.POSITIVE_INFINITY;
             
-            for (let x = 0; x < COLUMNS; x++) {
+            for (let x = 0; x < ConnectFourBoard.COLUMNS; x++) {
                 if (!state.makePly(x, X)) {
                     continue;
                 }
@@ -852,17 +852,29 @@ class ConnectFourSearchEngine {
 
 const heuristicFunction = new ConnectFourHeuristicFunction();
 const engine = new ConnectFourSearchEngine(heuristicFunction);
-const depth = 6;
+const depth = 8;
 
 let state = new ConnectFourBoard();
+console.log(state.toString());
+
+function millis() {
+    return new Date().valueOf();
+}
+
+let totalDurationX = 0;
+let totalDurationO = 0;
 
 while (true) {
-    console.log(state.toString());
     console.log("X's turn:");
     
+    let ta = millis();
     state = engine.search(state, depth, X);
+    let tb = millis();
+    
+    totalDurationX += tb - ta;
     
     console.log(state.toString());
+    console.log("X AI duration: " + (tb - ta) + " milliseconds.");
     
     if (state.isTie()) {
         console.log("RESULT: It's a tie.");
@@ -876,7 +888,14 @@ while (true) {
     
     console.log("O's turn:");
     
+    ta = millis();
     state = engine.search(state, depth, O);
+    tb = millis();
+    
+    totalDurationO += tb - ta;
+    
+    console.log(state.toString());
+    console.log("O AI duration: " + (tb - ta) + " milliseconds.");
     
     if (state.isTie()) {
         console.log("RESULT: It's a tie.");
@@ -888,3 +907,6 @@ while (true) {
         break;
     }
 }
+
+console.log("X AI total duration: " + totalDurationX + " milliseconds.");
+console.log("O AI total duration: " + totalDurationO + " milliseconds.");
