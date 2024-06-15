@@ -7,22 +7,6 @@ const X = 1;
 const EMPTY = -1;
 const BOARD_FILL_STYLE = '#3879e0';
 
-function getCanvas() {
-    const canvas = document.getElementById('canvas');
-    const windowWidth  = window.innerWidth;
-    const windowHeight = window.innerHeight - PROGRESS_BAR_HEIGHT;
-    
-    const cellWidth = Math.min(Math.floor(windowWidth  / COLUMNS),
-                               Math.floor(windowHeight / ROWS));
-                               
-    const canvasContext = canvas.getContext('2d');
-    
-    canvasContext.canvas.width  = cellWidth * COLUMNS;
-    canvasContext.canvas.height = cellWidth * ROWS;
-    
-    return canvas;
-};
-
 class ConnectFourBoard {
     static ROWS = 6;
     static COLUMNS = 7;
@@ -76,10 +60,10 @@ class ConnectFourBoard {
                 str += this.#getCellChar(this.get(x, y));
             }
             
-            str += "|\n";
+            str += "|<br/>";
         }
         
-        str += "+-+-+-+-+-+-+-+\n";
+        str += "+-+-+-+-+-+-+-+<br/>";
         str += " 1 2 3 4 5 6 7";
         
         return str;
@@ -743,170 +727,3 @@ class ConnectFourSearchEngine {
         }          
     }
 }
-
-(function() {
-    
-    const obj = new ConnectFourBoard();
-    console.log(obj.toString());
-    
-    function paintBoard(canvas) {
-        
-        const context = canvas.getContext('2d');
-        const width  = context.canvas.width;
-        const height = context.canvas.height;
-        context.fillStyle = BOARD_FILL_STYLE;
-        
-        context.fillRect(0, 
-                         0, 
-                         width,
-                         height);
-    };
-    
-    function getCanvasCellWidth(canvas) {
-        return Math.floor(canvas.getContext('2d').canvas.width / COLUMNS);
-    };
-    
-    function repaint() {
-        const canvas = getCanvas();
-        const cellWidth = getCanvasCellWidth(canvas);
-        paintBoard(canvas);
-        
-        const state = [
-            [X, O, O, O,    X, X,    X],
-            [X, O, O, null, X, X,    X],
-            [X, O, O, O,    X, X,    X],
-            [X, O, O, O,    X, null, X],
-            [X, O, O, O,    X, X,    X],
-            [X, O, O, O,    X, X,    X]
-        ];
-        
-        paintCells(canvas, state, cellWidth);
-    };
-    
-    window.onresize = (event) => {
-        repaint();
-    };
-    
-    window.onload = (event) => {
-        repaint();
-    };
-    
-    function paintCells(canvas, boardState, cellWidth) {
-        
-        const context = canvas.getContext('2d');
-        
-        for (let y = 0, endy = boardState.length; y < endy; y++) {
-            for (let x = 0, endx = boardState[0].length; x < endx; x++) {
-                
-                const cell = boardState[y][x];
-                let fillStyle;
-                
-                switch (cell) {
-                    case X:
-                        fillStyle = '#e0ae38';
-                        break;
-                        
-                    case O:
-                        fillStyle = '#b31e1e';
-                        break;
-                        
-                    default:
-                        fillStyle = 'white';
-                        break;
-                }
-                
-                context.fillStyle = fillStyle;
-                
-                const centerX = x * cellWidth + cellWidth / 2;
-                const centerY = y * cellWidth + cellWidth / 2;
-                const radius = (cellWidth / 2) - MARGIN_RADIUS;
-                
-                context.beginPath();
-                context.arc(centerX,
-                            centerY,
-                            radius,
-                            0,
-                            2 * Math.PI,
-                            false);
-                            
-                context.fillStyle = fillStyle;
-                context.fill();
-            }
-        }
-    };
-    
-//    paintBoard();
-//    
-//    const d = [
-//        [X, O, O, O, X, X, X],
-//        [X, O, O, null, X, X, X],
-//        [X, O, O, O, X, X, X],
-//        [X, O, O, O, X, null, X],
-//        [X, O, O, O, X, X, X],
-//        [X, O, O, O, X, X, X]
-//    ];
-//    
-//    paintCells(d);
-//    console.log(window.innerWidth, window.innerHeight);
-});
-
-const heuristicFunction = new ConnectFourHeuristicFunction();
-const engine = new ConnectFourSearchEngine(heuristicFunction);
-const depth = 4;
-
-let state = new ConnectFourBoard();
-console.log(state.toString());
-
-function millis() {
-    return new Date().valueOf();
-}
-
-let totalDurationX = 0;
-let totalDurationO = 0;
-
-while (true) {
-    console.log("X's turn:");
-    
-    let ta = millis();
-    state = engine.search(state, depth, X);
-    let tb = millis();
-    
-    totalDurationX += tb - ta;
-    
-    console.log(state.toString());
-    console.log("X AI duration: " + (tb - ta) + " milliseconds.");
-    
-    if (state.isTie()) {
-        console.log("RESULT: It's a tie.");
-        break;
-    }
-    
-    if (state.isWinningFor(X)) {
-        console.log("RESULT: X won.");
-        break;
-    }
-    
-    console.log("O's turn:");
-    
-    ta = millis();
-    state = engine.search(state, depth, O);
-    tb = millis();
-    
-    totalDurationO += tb - ta;
-    
-    console.log(state.toString());
-    console.log("O AI duration: " + (tb - ta) + " milliseconds.");
-    
-    if (state.isTie()) {
-        console.log("RESULT: It's a tie.");
-        break;
-    }
-    
-    if (state.isWinningFor(O)) {
-        console.log("RESULT: O won.");
-        break;
-    }
-}
-
-console.log("X AI total duration: " + totalDurationX + " milliseconds.");
-console.log("O AI total duration: " + totalDurationO + " milliseconds.");

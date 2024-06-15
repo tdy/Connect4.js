@@ -10,6 +10,11 @@ canvas {
     display: block;
 }
 
-body {
+/*body {
     overflow: hidden;
+}*/
+
+#output-text-div {
+    font-family: monospace;
+    font-size: 11pt;
 }
