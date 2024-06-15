@@ -53,6 +53,7 @@
 
                 text += "O's turn:<br/>";
                 output.innerHTML = text;
+                document.getElementById("output-text-div").innerHTML += text;
 
                 ta = millis();
                 state = engine.search(state, depth, O);
@@ -81,7 +82,7 @@
             text += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
             text += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
             
-            output.innerHTML = text;
+            output.innerHTML = text
         </script>
     </body>
 </html>
