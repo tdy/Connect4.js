@@ -66,12 +66,18 @@
                     
                     if (turn === X) {
                         if (state.isWinningFor(X)) {
-                            output.innerHTML += "RESULT: X won.";
+                            output.innerHTML += "RESULT: X won.<br/>";
+                            output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
+                            output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
+                            window.scrollTo(0, document.body.scrollHeight);
                             return;
                         }
                     } else {
                         if (state.isWinningFor(O)) {
-                            output.innerHTML += "RESULT: O won.";
+                            output.innerHTML += "RESULT: O won.<br/>";
+                            output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
+                            output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
+                            window.scrollTo(0, document.body.scrollHeight);
                             return;
                         }
                     }
@@ -88,8 +94,6 @@
             }
             
             gameLoop();
-            output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
-            output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
         </script>
     </body>
 </html>
