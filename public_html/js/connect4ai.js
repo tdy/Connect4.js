@@ -17,10 +17,26 @@ class ConnectFourBoard {
     #getCellChar(cellCharacter) {
         switch (cellCharacter) {
             case X:
-                return "X";
+                return "<span style='color: blue;'>X</span>";
                 
             case O:
-                return "O";
+                return "<span style='color: red;'>O</span>";
+                
+            case EMPTY:
+                return " ";
+                
+            default:
+                throw "Should not get here.";
+        }
+    }
+        
+    #getWinningCellChar(cellCharacter) {
+        switch (cellCharacter) {
+            case X:
+                return "<span style='color: black; font-weight: bold;'>X</span>";
+                
+            case O:
+                return "<span style='color: black; font-weight: bold;'>O</span>";
                 
             case EMPTY:
                 return " ";
@@ -67,11 +83,35 @@ class ConnectFourBoard {
     
     toString() {
         let str = "";
+        const winningPattern = this.getWinningPattern();
+        
+        function isInWinningPattern(winningPattern, x, y) {
+            if (winningPattern === null) {
+                return false;
+            }
+            
+            for (const p of winningPattern) {
+                if (p.x === x && p.y === y) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
         
         for (let y = 0; y < ConnectFourBoard.ROWS; y++) {
             for (let x = 0; x < ConnectFourBoard.COLUMNS; x++) {
                 str += "|";
-                str += this.#getCellChar(this.get(x, y));
+                
+                const belongsToWinningPattern = 
+                        isInWinningPattern(winningPattern, x, y);
+                
+                if (belongsToWinningPattern === false) {
+                    str += this.#getCellChar(this.get(x, y));
+
+                } else {
+                    str += this.#getWinningCellChar(this.get(x, y));
+                }
             }
             
             str += "|<br/>";
@@ -127,18 +167,20 @@ class ConnectFourBoard {
         
         let winningPattern = null;
         
-        for (let length = ROWS; length >= ConnectFourBoard.VICTORY_LENGTH; length--) {
+        for (let length = ROWS; 
+                 length >= ConnectFourBoard.VICTORY_LENGTH; 
+                 length--) {
         
             // Try load the vertical winning pattern:
             winningPattern = 
-                    tryLoadVerticalWinningPattern(X, length);
+                    this.tryLoadVerticalWinningPattern(X, length);
 
             if (winningPattern !== null) {
                 return winningPattern;
             }
         
             winningPattern = 
-                    tryLoadVerticalWinningPattern(O, length);
+                    this.tryLoadVerticalWinningPattern(O, length);
 
             if (winningPattern !== null) {
                 return winningPattern;
@@ -146,14 +188,14 @@ class ConnectFourBoard {
             
             // Try to load the ascending winning pattern:
             winningPattern =
-                tryLoadAscendingWinningPattern(X, length);
+                this.tryLoadAscendingWinningPattern(X, length);
         
             if (winningPattern !== null) {
                 return winningPattern;
             }
             
             winningPattern =
-                tryLoadAscendingWinningPattern(O, length);
+                this.tryLoadAscendingWinningPattern(O, length);
         
             if (winningPattern !== null) {
                 return winningPattern;
@@ -161,14 +203,14 @@ class ConnectFourBoard {
 
             // Try to load the descending winning pattern:
             winningPattern = 
-                    tryLoadDescendingWinningPattern(X, length);
+                    this.tryLoadDescendingWinningPattern(X, length);
 
             if (winningPattern !== null) {
                 return winningPattern;
             }
 
             winningPattern = 
-                    tryLoadDescendingWinningPattern(O, length);
+                    this.tryLoadDescendingWinningPattern(O, length);
             
             if (winningPattern !== null) {
                 return winningPattern;
@@ -178,14 +220,14 @@ class ConnectFourBoard {
         for (let length = COLUMNS; length >= ConnectFourBoard.VICTORY_LENGTH; length--) {
             
             winningPattern = 
-                    tryLoadHorizontalWinningPattern(X, length);
+                    this.tryLoadHorizontalWinningPattern(X, length);
             
             if (winningPattern !== null) {
                 return winningPattern;
             }
             
             winningPattern = 
-                    tryLoadHorizontalWinningPattern(O, length);
+                    this.tryLoadHorizontalWinningPattern(O, length);
             
             if (winningPattern !== null) {
                 return winningPattern;
@@ -291,7 +333,7 @@ class ConnectFourBoard {
         
         const lastX = COLUMNS - length;
         const lastY = length - 1;
-        const winningPattern = [];
+        let winningPattern = [];
         
         for (let y = ROWS - 1; y >= lastY; y--) {
             diagonalCheck:
@@ -319,7 +361,7 @@ class ConnectFourBoard {
         
         const firstX = length - 1;
         const lastY = ROWS - length;
-        const winningPattern = [];
+        let winningPattern = [];
         
         for (let y = ROWS - 1; y > lastY; y--) {
             diagonalCheck:
@@ -346,7 +388,7 @@ class ConnectFourBoard {
     tryLoadHorizontalWinningPattern(playerType, length) {
         
         const lastX = COLUMNS - length;
-        const winningPattern = [];
+        let winningPattern = [];
         
         for (let y = ROWS - 1; y >= 0; y--) {
             horizontalCheck:
@@ -373,7 +415,7 @@ class ConnectFourBoard {
     tryLoadVerticalWinningPattern(playerType, length) {
         
         const lastY = ROWS - length;
-        const winningPattern = [];
+        let winningPattern = [];
         
         for (let x = 0; x < COLUMNS; x++) {
             verticalCheck:
