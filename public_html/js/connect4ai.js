@@ -7,6 +7,206 @@ const X = 1;
 const EMPTY = -1;
 const BOARD_FILL_STYLE = '#3879e0';
 
+class ConnectFourHeuristicFunction {
+    static #TWO_BLOCKS_SCORE = 1.0;
+    static #THREE_BLOCKS_SCORE = 10.0;
+    static #MINIMIZING_PLAYER_VICTORY_SCORE = -10E6;
+    static #MAXIMIZING_PLAYER_VICTORY_SCORE = +10E6;
+    
+    evaluate(state, depth) {
+        if (state.isWinningFor(X)) {
+            return ConnectFourHeuristicFunction.#MINIMIZING_PLAYER_VICTORY_SCORE - depth;
+        }
+        
+        if (state.isWinningFor(O)) {
+            return ConnectFourHeuristicFunction.#MAXIMIZING_PLAYER_VICTORY_SCORE + depth;
+        }
+        
+        return this.#evaluate2(state) +
+               this.#evaluate3(state);
+    }
+    
+    #evaluate2(state) {
+        return this.#evaluate2Horizontal (state) +
+               this.#evaluate2Vertical   (state) + 
+               this.#evaluate2Ascending  (state) +
+               this.#evaluate2Descending (state);
+    }
+    
+    #evaluate3(state) {
+        return this.#evaluate3Horizontal (state) +
+               this.#evaluate3Vertical   (state) + 
+               this.#evaluate3Ascending  (state) +
+               this.#evaluate3Descending (state);
+    }
+    
+    #evaluate2Horizontal(state) {
+        let sum = 0.0;
+        
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLUMNS - 1; x++) {
+                if (state.get(x, y) === O &&
+                    state.get(x + 1, y) === O) {
+                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
+                } else if (state.get(x, y) === X &&
+                           state.get(x + 1, y) === X) {
+                    
+                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
+                }
+            }
+        }
+        
+        return sum;
+    }
+    
+    #evaluate2Vertical(state) {
+        let sum = 0.0;
+        
+        for (let y = 0; y < ROWS - 1; y++) {
+            for (let x = 0; x < COLUMNS; x++) {
+                if (state.get(x, y) === O &&
+                    state.get(x, y + 1) === O) {
+                    
+                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
+                } else if (state.get(x, y) === X &&
+                       state.get(x, y + 1) === X) {
+                    
+                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
+                }
+            }
+        }
+        
+        return sum;
+    }
+    
+    #evaluate2Ascending(state) {
+        let sum = 0.0;
+        
+        for (let y = ROWS - 1; y > 0; y--) {
+            for (let x = 0; x < COLUMNS - 1; x++) {
+                if (state.get(x, y) === O &&
+                    state.get(x + 1, y - 1) === O) {
+                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
+                } else if (state.get(x, y) === X &&
+                           state.get(x + 1, y - 1) === X) {
+                    
+                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
+                }
+            }
+        }
+        
+        return sum;
+    }
+    
+    #evaluate2Descending(state) {
+        let sum = 0.0;
+        
+        for (let y = ROWS - 1; y > 0; y--) {
+            for (let x = 1; x < COLUMNS; x++) {
+                if (state.get(x, y) === O &&
+                    state.get(x - 1, y - 1) === O) {
+                    
+                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
+                } else if (state.get(x, y) === X &&
+                           state.get(x - 1, y - 1) === X) {
+                    
+                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
+                }
+            }
+        }
+        
+        return sum;
+    }
+    
+    #evaluate3Horizontal(state) {
+        let sum = 0.0;
+        
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLUMNS - 2; x++) {
+                if (state.get(x, y) === O &&
+                    state.get(x + 1, y) === O &&
+                    state.get(x + 2, y) === O) {
+                    
+                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
+                } else if (state.get(x, y) === X &&
+                        state.get(x + 1, y) === X &&
+                        state.get(x + 2, y) === X) {
+                    
+                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
+                }
+            }
+        }
+        
+        return sum;
+    }
+    
+    #evaluate3Vertical(state) {
+        let sum = 0.0;
+        
+        for (let y = 0; y < ROWS - 2; y++) {
+            for (let x = 0; x < COLUMNS; x++) {
+                if (state.get(x, y) === O &&
+                    state.get(x, y + 1) === O &&
+                    state.get(x, y + 2) === O) {
+                    
+                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
+                } else if (state.get(x, y) === X &&
+                        state.get(x, y + 1) === X &&
+                        state.get(x, y + 2) === X) {
+                    
+                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
+                }
+            }
+        }
+        
+        return sum;
+    }
+    
+    #evaluate3Ascending(state) {
+        let sum = 0.0;
+        
+        for (let y = ROWS - 1; y > 1; y--) {
+            for (let x = 0; x < COLUMNS - 2; x++) {
+                if (state.get(x, y) === O &&
+                    state.get(x + 1, y - 1) === O &&
+                    state.get(x + 2, y - 2) === O) {
+                    
+                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
+                } else if (state.get(x, y) === X &&
+                        state.get(x + 1, y - 1) === X && 
+                        state.get(x + 2, y - 2) === X) {
+                    
+                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
+                }
+            }
+        }
+        
+        return sum;
+    }
+    
+    #evaluate3Descending(state) {
+        let sum = 0.0;
+        
+        for (let y = ROWS - 1; y > 1; y--) {
+            for (let x = 2; x < COLUMNS; x++) {
+                if (state.get(x, y) === O &&
+                    state.get(x - 1, y - 1) === O &&
+                    state.get(x - 2, y - 2) === O) {
+                    
+                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
+                } else if (state.get(x, y) === X &&
+                        state.get(x - 1, y - 1) === X &&
+                        state.get(x - 2, y - 2) === X) {
+                    
+                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
+                }
+            }
+        }
+        
+        return sum;
+    }
+}
+
 class ConnectFourBoard {
     static ROWS = 6;
     static COLUMNS = 7;
@@ -33,10 +233,10 @@ class ConnectFourBoard {
     #getWinningCellChar(cellCharacter) {
         switch (cellCharacter) {
             case X:
-                return "<span style='color: black; font-weight: bold;'>X</span>";
+                return "<span style='color: white; background-color: black; font-weight: bold;'>X</span>";
                 
             case O:
-                return "<span style='color: black; font-weight: bold;'>O</span>";
+                return "<span style='color: white; background-color: black; font-weight: bold;'>O</span>";
                 
             case EMPTY:
                 return " ";
@@ -439,206 +639,6 @@ class ConnectFourBoard {
         return null;
     }
 };
-
-class ConnectFourHeuristicFunction {
-    static #TWO_BLOCKS_SCORE = 1.0;
-    static #THREE_BLOCKS_SCORE = 10.0;
-    static #MINIMIZING_PLAYER_VICTORY_SCORE = -10E6;
-    static #MAXIMIZING_PLAYER_VICTORY_SCORE = +10E6;
-    
-    evaluate(state, depth) {
-        if (state.isWinningFor(X)) {
-            return ConnectFourHeuristicFunction.#MINIMIZING_PLAYER_VICTORY_SCORE - depth;
-        }
-        
-        if (state.isWinningFor(O)) {
-            return ConnectFourHeuristicFunction.#MAXIMIZING_PLAYER_VICTORY_SCORE + depth;
-        }
-        
-        return this.#evaluate2(state) +
-               this.#evaluate3(state);
-    }
-    
-    #evaluate2(state) {
-        return this.#evaluate2Horizontal (state) +
-               this.#evaluate2Vertical   (state) + 
-               this.#evaluate2Ascending  (state) +
-               this.#evaluate2Descending (state);
-    }
-    
-    #evaluate3(state) {
-        return this.#evaluate3Horizontal (state) +
-               this.#evaluate3Vertical   (state) + 
-               this.#evaluate3Ascending  (state) +
-               this.#evaluate3Descending (state);
-    }
-    
-    #evaluate2Horizontal(state) {
-        let sum = 0.0;
-        
-        for (let y = 0; y < ROWS; y++) {
-            for (let x = 0; x < COLUMNS - 1; x++) {
-                if (state.get(x, y) === O &&
-                    state.get(x + 1, y) === O) {
-                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
-                } else if (state.get(x, y) === X &&
-                           state.get(x + 1, y) === X) {
-                    
-                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
-                }
-            }
-        }
-        
-        return sum;
-    }
-    
-    #evaluate2Vertical(state) {
-        let sum = 0.0;
-        
-        for (let y = 0; y < ROWS - 1; y++) {
-            for (let x = 0; x < COLUMNS; x++) {
-                if (state.get(x, y) === O &&
-                    state.get(x, y + 1) === O) {
-                    
-                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
-                } else if (state.get(x, y) === X &&
-                       state.get(x, y + 1) === X) {
-                    
-                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
-                }
-            }
-        }
-        
-        return sum;
-    }
-    
-    #evaluate2Ascending(state) {
-        let sum = 0.0;
-        
-        for (let y = ROWS - 1; y > 0; y--) {
-            for (let x = 0; x < COLUMNS - 1; x++) {
-                if (state.get(x, y) === O &&
-                    state.get(x + 1, y - 1) === O) {
-                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
-                } else if (state.get(x, y) === X &&
-                           state.get(x + 1, y - 1) === X) {
-                    
-                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
-                }
-            }
-        }
-        
-        return sum;
-    }
-    
-    #evaluate2Descending(state) {
-        let sum = 0.0;
-        
-        for (let y = ROWS - 1; y > 0; y--) {
-            for (let x = 1; x < COLUMNS; x++) {
-                if (state.get(x, y) === O &&
-                    state.get(x - 1, y - 1) === O) {
-                    
-                    sum += ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
-                } else if (state.get(x, y) === X &&
-                           state.get(x - 1, y - 1) === X) {
-                    
-                    sum -= ConnectFourHeuristicFunction.#TWO_BLOCKS_SCORE;
-                }
-            }
-        }
-        
-        return sum;
-    }
-    
-    #evaluate3Horizontal(state) {
-        let sum = 0.0;
-        
-        for (let y = 0; y < ROWS; y++) {
-            for (let x = 0; x < COLUMNS - 2; x++) {
-                if (state.get(x, y) === O &&
-                    state.get(x + 1, y) === O &&
-                    state.get(x + 2, y) === O) {
-                    
-                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
-                } else if (state.get(x, y) === X &&
-                        state.get(x + 1, y) === X &&
-                        state.get(x + 2, y) === X) {
-                    
-                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
-                }
-            }
-        }
-        
-        return sum;
-    }
-    
-    #evaluate3Vertical(state) {
-        let sum = 0.0;
-        
-        for (let y = 0; y < ROWS - 2; y++) {
-            for (let x = 0; x < COLUMNS; x++) {
-                if (state.get(x, y) === O &&
-                    state.get(x, y + 1) === O &&
-                    state.get(x, y + 2) === O) {
-                    
-                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
-                } else if (state.get(x, y) === X &&
-                        state.get(x, y + 1) === X &&
-                        state.get(x, y + 2) === X) {
-                    
-                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
-                }
-            }
-        }
-        
-        return sum;
-    }
-    
-    #evaluate3Ascending(state) {
-        let sum = 0.0;
-        
-        for (let y = ROWS - 1; y > 1; y--) {
-            for (let x = 0; x < COLUMNS - 2; x++) {
-                if (state.get(x, y) === O &&
-                    state.get(x + 1, y - 1) === O &&
-                    state.get(x + 2, y - 2) === O) {
-                    
-                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
-                } else if (state.get(x, y) === X &&
-                        state.get(x + 1, y - 1) === X && 
-                        state.get(x + 2, y - 2) === X) {
-                    
-                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
-                }
-            }
-        }
-        
-        return sum;
-    }
-    
-    #evaluate3Descending(state) {
-        let sum = 0.0;
-        
-        for (let y = ROWS - 1; y > 1; y--) {
-            for (let x = 2; x < COLUMNS; x++) {
-                if (state.get(x, y) === O &&
-                    state.get(x - 1, y - 1) === O &&
-                    state.get(x - 2, y - 2) === O) {
-                    
-                    sum += ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
-                } else if (state.get(x, y) === X &&
-                        state.get(x - 1, y - 1) === X &&
-                        state.get(x - 2, y - 2) === X) {
-                    
-                    sum -= ConnectFourHeuristicFunction.#THREE_BLOCKS_SCORE;
-                }
-            }
-        }
-        
-        return sum;
-    }
-}
 
 class ConnectFourAlphaBetaPruningSearchEngine {
     #bestMoveState;
