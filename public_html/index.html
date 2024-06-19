@@ -7,9 +7,75 @@
         <link rel='stylesheet' type="text/css" href='css/connect4.css' />
     </head>
     <body>
+        <form>
+            <div class="paramDivs">
+            <h3>X engine parameters</h3>
+            <h5>Search algorithm for X (beginning) AI:</h5>
+            
+            <table>
+                <tr><td> <label for="xEngineAlphaBeta">Alpha-beta pruning              </label> </td><td> <input checked type="radio" name="xEngine" id="xEngineAlphaBeta" value="Alpha-beta"></td></tr>
+                <tr><td> <label for="xEngineNegamax">  Negamax                         </label> </td><td> <input         type="radio" name="xEngine" id="xEngineNegamax"   value="Negamax">   </td></tr>
+                <tr><td> <label for="xEnginePVS">      PVS (Principal Variation Search)</label> </td><td> <input         type="radio" name="xEngine" id="xEnginePVS"       value="PVS">       </td></tr>
+            </table>
+            
+            <h5> Search depth for X AI:</h5>
+            
+            <table>
+                <tr><td> <label for="xEngineDepth1" >1 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth1"  value="1">         </td> </tr>
+                <tr><td> <label for="xEngineDepth2" >2 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth2"  value="2">         </td> </tr>
+                <tr><td> <label for="xEngineDepth3" >3 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth3"  value="3">         </td> </tr>
+                <tr><td> <label for="xEngineDepth4" >4 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth4"  value="4">         </td> </tr>
+                <tr><td> <label for="xEngineDepth5" >5 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth5"  value="5">         </td> </tr>
+                <tr><td> <label for="xEngineDepth6" >6 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth6"  value="6">         </td> </tr>
+                <tr><td> <label for="xEngineDepth7" >7 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth7"  value="7">         </td> </tr>
+                <tr><td> <label for="xEngineDepth8" >8 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth8"  value="8" checked> </td> </tr>
+                <tr><td> <label for="xEngineDepth9" >9 </label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth9"  value="9">          </td> </tr>
+                <tr><td> <label for="xEngineDepth10">10</label> </td> <td> <input type="radio" name="xEngineDepth" id="xEngineDepth10" value="10">         </td> </tr>
+            </table>
+            </div>
+            
+            <div class="paramDivs">
+            <h3>O engine parameters</h3>
+            <h5>Search algorithm for O (following) AI:</h5>
+            
+            <table>
+                <tr><td> <label for="oEngineAlphaBeta">Alpha-beta pruning              </label> </td><td> <input checked type="radio" name="oEngine" id="oEngineAlphaBeta" value="Alpha-beta"></td></tr>
+                <tr><td> <label for="oEngineNegamax">  Negamax                         </label> </td><td> <input         type="radio" name="oEngine" id="oEngineNegamax"   value="Negamax">    </td></tr>
+                <tr><td> <label for="oEnginePVS">      PVS (Principal Variation Search)</label> </td><td> <input         type="radio" name="oEngine" id="oEnginePVS"       value="PVS">        </td></tr>
+            </table>
+            
+            <h5> Search depth for X AI:</h5>
+            
+            <table>
+                <tr><td> <label for="oEngineDepth1" >1 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth1"  value="1">         </td> </tr>
+                <tr><td> <label for="oEngineDepth2" >2 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth2"  value="2">         </td> </tr>
+                <tr><td> <label for="oEngineDepth3" >3 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth3"  value="3">         </td> </tr>
+                <tr><td> <label for="oEngineDepth4" >4 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth4"  value="4">         </td> </tr>
+                <tr><td> <label for="oEngineDepth5" >5 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth5"  value="5">         </td> </tr>
+                <tr><td> <label for="oEngineDepth6" >6 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth6"  value="6">         </td> </tr>
+                <tr><td> <label for="oEngineDepth7" >7 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth7"  value="7">         </td> </tr>
+                <tr><td> <label for="oEngineDepth8" >8 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth8"  value="8" checked> </td> </tr>
+                <tr><td> <label for="oEngineDepth9" >9 </label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth9"  value="9">         </td> </tr>
+                <tr><td> <label for="oEngineDepth10">10</label> </td> <td> <input type="radio" name="oEngineDepth" id="oEngineDepth10" value="10">        </td> </tr>
+            </table>
+            </div>
+            
+        </form>
+        
+        <button onclick="runMatch();">RUN MATCH!</button>
+        
         <div id='output-text-div'></div>
         <script src='js/connect4ai.js'></script>
         <script>
+            
+            let xEngine;
+            let oEngine;
+            let xDepth;
+            let yDepth;
+            
+            function runMatch() {
+                alert("alert");
+            }
 
             function flipTurn(playerTurn) {
                 switch (playerTurn) {
@@ -155,7 +221,7 @@
                 }, 0);
             }
             
-            gameLoop();
+//            gameLoop();
         </script>
     </body>
 </html>
