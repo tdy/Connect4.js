@@ -1,43 +1,161 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>rodde's Connect Four</title>
+        <title>AI vs. AI playing Connect 4</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel='stylesheet' type='text/css' href='css/connect4.css' />
-        <script src='js/connect4ai.js'></script>
-        <script src="js/connect4canvas.js"></script>
+        <link rel='stylesheet' type="text/css" href='css/connect4.css' />
     </head>
     <body>
-        <canvas id='canvas'></canvas>
-        
+        <div id='output-text-div'></div>
+        <script src='js/connect4ai.js'></script>
         <script>
-            function getViewportWidth() {
-                return document.documentElement.clientWidth;
-            };
+
+            function flipTurn(playerTurn) {
+                switch (playerTurn) {
+                    case X:
+                        return O;
+                        
+                    case O:
+                        return X;
+                        
+                    default:
+                        throw "Should not get here.";
+                }
+            }
+
+            const output = document.getElementById('output-text-div');
+            const heuristicFunction = new ConnectFourHeuristicFunction();
+            const engineX = new ConnectFourAlphaBetaPruningSearchEngine(
+                                    heuristicFunction);
+                            
+            const engineO = new ConnectFourNegamaxSearchEngine(
+                                    heuristicFunction);
+            const depth = 8;
             
-            function getViewportHeight() {
-                return document.documentElement.clientHeight;
+            let turnNumber = 1;
+            
+            function getTurnNumberString() {
+                if (turnNumber % 10 === 1) {
+                    return turnNumber + "st";
+                }
+                
+                if (turnNumber % 10 === 2) {
+                    return turnNumber + "nd";
+                }
+                
+                if (turnNumber % 10 === 3) {
+                    return turnNumber + "rd";
+                }
+                
+                return turnNumber + "th";
+            }
+
+            let engine = engineX;
+            let state = new ConnectFourBoard();
+            output.innerHTML += state.toString() + "<br/>";
+
+            function millis() {
+                return new Date().valueOf();
             }
             
-            const canvasObject = 
-                    new ConnectFourCanvas(
-                        document.getElementById('canvas'),
-                        getViewportWidth(), 
-                        getViewportHeight() - 20);
-                        
-            const board = new ConnectFourBoard();
-                        
-            canvasObject.setBoard(board);
-            canvasObject.render();
+            let totalDurationX = 0;
+            let totalDurationO = 0;
             
-            window.onresize = (event) => {
-                const windowWidth  = window.innerWidth - 30;
-                const windowHeight = window.innerHeight;
+            let turn = X;
+            
+            function getEngineName(engine) {
+                if (engine === engineX) {
+                    return "Alpha-beta pruning engine (X)";
+                }
                 
-                canvasObject.setSize(windowWidth, windowHeight);
-                canvasObject.render();
-            };
+                if (engine === engineO) {
+                    return "Negamax engine (O)";
+                }
+                
+                throw "Should not get here.";
+            }
+            
+            function gameLoop() {
+                setTimeout(() => {
+                    let ta = millis();
+                    state = engine.search(state, depth, turn);
+                    let tb = millis();
+                    
+                    if (turn === X) {
+                        totalDurationX += tb - ta;
+                    } else {
+                        totalDurationO += tb - ta;
+                    }
+                    
+                    output.innerHTML += state.toString();
+                    output.innerHTML += "<br/>";
+                    output.innerHTML += 
+                            turn === X ? 
+                                getEngineName(engine)
+                                        + " made the "
+                                        + getTurnNumberString()
+                                        + " turn, duration: " 
+                                        + (tb - ta) 
+                                        + " milliseconds.<br/>"
+                                :
+                                getEngineName(engine) 
+                                        + " made the "
+                                        + getTurnNumberString()
+                                        + " turn, duration: " 
+                                        + (tb - ta) 
+                                        + " milliseconds.<br/>";
+                                
+                    turnNumber++;
+                                
+                    if (state.isTie()) {
+                        output.innerHTML += "RESULT: It's a tie.<br/>";
+                        return;
+                    }
+                    
+                    if (turn === X) {
+                        if (state.isWinningFor(X)) {
+                            output.innerHTML += "RESULT: X won.<br/>";
+                            output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
+                            output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
+                            window.scrollTo(0, document.body.scrollHeight);
+                            return;
+                        }
+                    } else {
+                        if (state.isWinningFor(O)) {
+                            output.innerHTML += "RESULT: O won.<br/>";
+                            output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
+                            output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
+                            window.scrollTo(0, document.body.scrollHeight);
+                            return;
+                        }
+                    }
+                    
+                    function flipEngine(engine) {
+                        if (engine === engineX) {
+                            return engineO;
+                        }
+                        
+                        if (engine === engineO) {
+                            return engineX;
+                        }
+                        
+                        throw "Should not get here.";
+                    }
+                    
+                    turn = flipTurn(turn);
+                    engine = flipEngine(engine);
+                    
+                    if (!state.isTerminal()) {
+                        // Run the next frame:
+                        window.scrollTo(0, document.body.scrollHeight);
+                        requestAnimationFrame(gameLoop);
+                    } else {
+                    }
+                }, 0);
+            }
+            
+            gameLoop();
         </script>
     </body>
 </html>
