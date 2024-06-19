@@ -10,9 +10,9 @@
         <form>
             <div class="paramDivs">
             <h3>X engine parameters</h3>
-            <h5>Search algorithm for X (beginning) AI:</h5>
             
             <table>
+                <tr><td><h5>Search algorithm for X (beginning) AI:</h5></td><td></td></tr>
                 <tr><td> <label for="xEngineId">Choose X engine:</label> </td> 
                     <td>
                         <select name="xEngine" id="xEngineId">
@@ -22,12 +22,9 @@
                         </select>
                     </td>
                 </tr>
-            </table>
-            
-            <h5> Search depth for X AI:</h5>
-            
-            <table>
-                <tr><td> <label for="xEngineDepthId">Choose O engine:</label> </td>
+                
+                <tr><td><h5>Search depth for X AI:</h5></td><td></td></tr>
+                <tr><td> <label for="xEngineDepthId">Choose X engine depth  :</label> </td>
                     <td>
                         <select name="xEngineDepth" id="xEngineDepthId">
                             <option value="1"         >Depth 1 </option>
@@ -46,13 +43,12 @@
             </table>
             </div>
             
-            
             <div class="paramDivs">
             <h3>O engine parameters</h3>
-            <h5>Search algorithm for O (following) AI:</h5>
             
             <table>
-                <tr><td> <label for="oEngineId">Choose O engine:</label> </td> 
+                <tr><td><h5>Search algorithm for O (following) AI:</h5></td><td></td></tr>
+                <tr><td> <label for="oEngineId">Choose X engine:</label> </td> 
                     <td>
                         <select name="oEngine" id="oEngineId">
                             <option value="alpha-beta">Alpha-beta pruning</option>
@@ -61,12 +57,9 @@
                         </select>
                     </td>
                 </tr>
-            </table>
-            
-            <h5> Search depth for O AI:</h5>
-            
-            <table>
-                <tr><td> <label for="oEngineDepthId">Choose O engine:</label> </td>
+                
+                <tr><td><h5>Search depth for X AI:</h5></td><td></td></tr>
+                <tr><td> <label for="oEngineDepthId">Choose O engine depth  :</label> </td>
                     <td>
                         <select name="oEngineDepth" id="oEngineDepthId">
                             <option value="1"         >Depth 1 </option>
@@ -86,7 +79,7 @@
             </div>
         </form>
         
-        <button onclick="runMatch();">RUN MATCH!</button>
+        <div id="runButton"><button onclick="runMatch();">RUN MATCH!</button></div>
         
         <div id='output-text-div'></div>
         <script src='js/connect4ai.js'></script>
@@ -104,13 +97,13 @@
             
             function nameToEngine(name) {
                 switch (name) {
-                    case "Alpha-beta":
+                    case "alpha-beta":
                         return alphaBetaPruningSearchEngine;
                         
-                    case "Negamax":
+                    case "negamax":
                         return negamaxSearchEngine;
                         
-                    case "PVS":
+                    case "pvs":
                         return pvsSearchEngine;
                         
                     default:
@@ -120,12 +113,12 @@
             
             function getXEngine() {
                 const selection = document.getElementById("xEngineId");
-                return selection.value;
+                return nameToEngine(selection.value);
             }
             
             function getOEngine() {
                 const selection = document.getElementById("oEngineId");
-                return selection.value;
+                return nameToEngine(selection.value);
             }
             
             function depthNameToInteger(name) {
@@ -133,14 +126,13 @@
             }
             
             function getXDepth() {
-                
-                const radio = document.querySelector("input[name='xEngineDepth']:checked");
-                return depthNameToInteger(radio.value);
+                const selection = document.getElementById("xEngineDepthId");
+                return Number(selection.value);
             }
             
             function getODepth() {
-                const radio = document.querySelector("input[name='oEngineDepth']:checked");
-                return depthNameToInteger(radio.value);
+                const selection = document.getElementById("oEngineDepthId");
+                return Number(selection.value);
             }
             
             function runMatch() {
@@ -148,6 +140,8 @@
                 oEngine = getOEngine();
                 xDepth = getXDepth();
                 oDepth = getODepth();
+                engine = xEngine;
+                depth = xDepth;
                 gameLoop();
             }
 
@@ -162,6 +156,18 @@
                     default:
                         throw "Should not get here.";
                 }
+            }
+            
+            function flipDepth(depth) {
+                if (depth === xDepth) {
+                    return oDepth;
+                }
+                
+                if (depth === oDepth) {
+                    return xDepth;
+                }
+                
+                throw "Should not get here.";
             }
 
             const output = document.getElementById('output-text-div');
@@ -216,9 +222,9 @@
                         throw "Should not get here.";
                 }
                 
-                if (engine === engineX) {
+                if (engine === xEngine) {
                     return str + " (X)";
-                } else if (engine === engineO) {
+                } else if (engine === oEngine) {
                     return str + " (O)";
                 } else {
                     throw "Should not get here.";
@@ -281,30 +287,28 @@
                     }
                     
                     function flipEngine(engine) {
-                        if (engine === engineX) {
-                            return engineO;
+                        if (engine === xEngine) {
+                            return oEngine;
                         }
                         
-                        if (engine === engineO) {
-                            return engineX;
+                        if (engine === oEngine) {
+                            return xEngine;
                         }
                         
                         throw "Should not get here.";
                     }
                     
                     turn = flipTurn(turn);
+                    depth = flipDepth(depth);
                     engine = flipEngine(engine);
                     
                     if (!state.isTerminal()) {
                         // Run the next frame:
                         window.scrollTo(0, document.body.scrollHeight);
                         requestAnimationFrame(gameLoop);
-                    } else {
                     }
                 }, 0);
             }
-            
-//            gameLoop();
         </script>
     </body>
 </html>
