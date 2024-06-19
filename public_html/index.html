@@ -119,13 +119,13 @@
             }
             
             function getXEngine() {
-                const radio = document.querySelector("input[name='xEngine']:checked");
-                return nameToEngine(radio.value);
+                const selection = document.getElementById("xEngineId");
+                return selection.value;
             }
             
             function getOEngine() {
-                const radio = document.querySelector("input[name='oEngine']:checked");
-                return nameToEngine(radio.value);
+                const selection = document.getElementById("oEngineId");
+                return selection.value;
             }
             
             function depthNameToInteger(name) {
@@ -133,6 +133,7 @@
             }
             
             function getXDepth() {
+                
                 const radio = document.querySelector("input[name='xEngineDepth']:checked");
                 return depthNameToInteger(radio.value);
             }
@@ -183,7 +184,6 @@
                 return turnNumber + "th";
             }
 
-            let engine = engineX;
             let state = new ConnectFourBoard();
             output.innerHTML += state.toString() + "<br/>";
 
