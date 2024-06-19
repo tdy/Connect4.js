@@ -68,13 +68,62 @@
         <script src='js/connect4ai.js'></script>
         <script>
             
+            const heuristicFunction = new ConnectFourHeuristicFunction();
+            const alphaBetaPruningSearchEngine = new ConnectFourAlphaBetaPruningSearchEngine(heuristicFunction);
+            const negamaxSearchEngine = new ConnectFourNegamaxSearchEngine(heuristicFunction);
+            const pvsSearchEngine = new ConnectFourPrincipalVariationSearchEngine(heuristicFunction);
+            
             let xEngine;
             let oEngine;
             let xDepth;
             let yDepth;
             
+            function nameToEngine(name) {
+                switch (name) {
+                    case "Alpha-beta":
+                        return alphaBetaPruningSearchEngine;
+                        
+                    case "Negamax":
+                        return negamaxSearchEngine;
+                        
+                    case "PVS":
+                        return pvsSearchEngine;
+                        
+                    default:
+                        throw "Should not get here.";
+                }
+            }
+            
+            function getXEngine() {
+                const radio = document.querySelector("input[name='xEngine']:checked");
+                return nameToEngine(radio.value);
+            }
+            
+            function getOEngine() {
+                const radio = document.querySelector("input[name='oEngine']:checked");
+                return nameToEngine(radio.value);
+            }
+            
+            function depthNameToInteger(name) {
+                return Number(name);
+            }
+            
+            function getXDepth() {
+                const radio = document.querySelector("input[name='xEngineDepth']:checked");
+                return depthNameToInteger(radio.value);
+            }
+            
+            function getODepth() {
+                const radio = document.querySelector("input[name='oEngineDepth']:checked");
+                return depthNameToInteger(radio.value);
+            }
+            
             function runMatch() {
-                alert("alert");
+                xEngine = getXEngine();
+                oEngine = getOEngine();
+                xDepth = getXDepth();
+                oDepth = getODepth();
+                gameLoop();
             }
 
             function flipTurn(playerTurn) {
@@ -91,13 +140,6 @@
             }
 
             const output = document.getElementById('output-text-div');
-            const heuristicFunction = new ConnectFourHeuristicFunction();
-            const engineX = new ConnectFourAlphaBetaPruningSearchEngine(
-                                    heuristicFunction);
-                            
-            const engineO = new ConnectFourNegamaxSearchEngine(
-                                    heuristicFunction);
-            const depth = 8;
             
             let turnNumber = 1;
             
@@ -131,15 +173,32 @@
             let turn = X;
             
             function getEngineName(engine) {
+                let str = "";
+                
+                switch (engine) {
+                    case alphaBetaPruningSearchEngine:
+                        str += "Alpha-beta pruning engine";
+                        break;
+                        
+                    case negamaxSearchEngine:
+                        str += "Negamax engine";
+                        break;
+                        
+                    case pvsSearchEngine:
+                        str += "PVS engine";
+                        break;
+                        
+                    default:
+                        throw "Should not get here.";
+                }
+                
                 if (engine === engineX) {
-                    return "Alpha-beta pruning engine (X)";
+                    return str + " (X)";
+                } else if (engine === engineO) {
+                    return str + " (O)";
+                } else {
+                    throw "Should not get here.";
                 }
-                
-                if (engine === engineO) {
-                    return "Negamax engine (O)";
-                }
-                
-                throw "Should not get here.";
             }
             
             function gameLoop() {
