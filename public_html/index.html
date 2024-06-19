@@ -1,43 +1,310 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>rodde's Connect Four</title>
+        <title>AI vs. AI playing Connect 4</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel='stylesheet' type='text/css' href='css/connect4.css' />
-        <script src='js/connect4ai.js'></script>
-        <script src="js/connect4canvas.js"></script>
+        <link rel='stylesheet' type="text/css" href='css/connect4.css' />
     </head>
     <body>
-        <canvas id='canvas'></canvas>
-        
-        <script>
-            function getViewportWidth() {
-                return document.documentElement.clientWidth;
-            };
+        <form>
+            <div class="paramDivs">
+            <h3>X engine parameters</h3>
+            <h5>Search algorithm for X (beginning) AI:</h5>
             
-            function getViewportHeight() {
-                return document.documentElement.clientHeight;
+            <table>
+                <tr><td> <label for="xEngineId">Choose X engine:</label> </td> 
+                    <td>
+                        <select name="xEngine" id="xEngineId">
+                            <option value="alpha-beta">Alpha-beta pruning</option>
+                            <option value="negamax"   >Negamax</option>
+                            <option value="pvs"       >PVS (Principal Variation Search)</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            
+            <h5> Search depth for X AI:</h5>
+            
+            <table>
+                <tr><td> <label for="xEngineDepthId">Choose O engine:</label> </td>
+                    <td>
+                        <select name="xEngineDepth" id="xEngineDepthId">
+                            <option value="1"         >Depth 1 </option>
+                            <option value="2"         >Depth 2 </option>
+                            <option value="3"         >Depth 3 </option>
+                            <option value="4"         >Depth 4 </option>
+                            <option value="5"         >Depth 5 </option>
+                            <option value="6"         >Depth 6 </option>
+                            <option value="7"         >Depth 7 </option>
+                            <option value="8" selected>Depth 8 </option>
+                            <option value="9"         >Depth 9 </option>
+                            <option value="10"        >Depth 10</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            </div>
+            
+            
+            <div class="paramDivs">
+            <h3>O engine parameters</h3>
+            <h5>Search algorithm for O (following) AI:</h5>
+            
+            <table>
+                <tr><td> <label for="oEngineId">Choose O engine:</label> </td> 
+                    <td>
+                        <select name="oEngine" id="oEngineId">
+                            <option value="alpha-beta">Alpha-beta pruning</option>
+                            <option value="negamax"   >Negamax</option>
+                            <option value="pvs"       >PVS (Principal Variation Search)</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            
+            <h5> Search depth for O AI:</h5>
+            
+            <table>
+                <tr><td> <label for="oEngineDepthId">Choose O engine:</label> </td>
+                    <td>
+                        <select name="oEngineDepth" id="oEngineDepthId">
+                            <option value="1"         >Depth 1 </option>
+                            <option value="2"         >Depth 2 </option>
+                            <option value="3"         >Depth 3 </option>
+                            <option value="4"         >Depth 4 </option>
+                            <option value="5"         >Depth 5 </option>
+                            <option value="6"         >Depth 6 </option>
+                            <option value="7"         >Depth 7 </option>
+                            <option value="8" selected>Depth 8 </option>
+                            <option value="9"         >Depth 9 </option>
+                            <option value="10"        >Depth 10</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            </div>
+        </form>
+        
+        <button onclick="runMatch();">RUN MATCH!</button>
+        
+        <div id='output-text-div'></div>
+        <script src='js/connect4ai.js'></script>
+        <script>
+            
+            const heuristicFunction = new ConnectFourHeuristicFunction();
+            const alphaBetaPruningSearchEngine = new ConnectFourAlphaBetaPruningSearchEngine(heuristicFunction);
+            const negamaxSearchEngine = new ConnectFourNegamaxSearchEngine(heuristicFunction);
+            const pvsSearchEngine = new ConnectFourPrincipalVariationSearchEngine(heuristicFunction);
+            
+            let xEngine;
+            let oEngine;
+            let xDepth;
+            let yDepth;
+            
+            function nameToEngine(name) {
+                switch (name) {
+                    case "Alpha-beta":
+                        return alphaBetaPruningSearchEngine;
+                        
+                    case "Negamax":
+                        return negamaxSearchEngine;
+                        
+                    case "PVS":
+                        return pvsSearchEngine;
+                        
+                    default:
+                        throw "Should not get here.";
+                }
             }
             
-            const canvasObject = 
-                    new ConnectFourCanvas(
-                        document.getElementById('canvas'),
-                        getViewportWidth(), 
-                        getViewportHeight() - 20);
-                        
-            const board = new ConnectFourBoard();
-                        
-            canvasObject.setBoard(board);
-            canvasObject.render();
+            function getXEngine() {
+                const selection = document.getElementById("xEngineId");
+                return selection.value;
+            }
             
-            window.onresize = (event) => {
-                const windowWidth  = window.innerWidth - 30;
-                const windowHeight = window.innerHeight;
+            function getOEngine() {
+                const selection = document.getElementById("oEngineId");
+                return selection.value;
+            }
+            
+            function depthNameToInteger(name) {
+                return Number(name);
+            }
+            
+            function getXDepth() {
                 
-                canvasObject.setSize(windowWidth, windowHeight);
-                canvasObject.render();
-            };
+                const radio = document.querySelector("input[name='xEngineDepth']:checked");
+                return depthNameToInteger(radio.value);
+            }
+            
+            function getODepth() {
+                const radio = document.querySelector("input[name='oEngineDepth']:checked");
+                return depthNameToInteger(radio.value);
+            }
+            
+            function runMatch() {
+                xEngine = getXEngine();
+                oEngine = getOEngine();
+                xDepth = getXDepth();
+                oDepth = getODepth();
+                gameLoop();
+            }
+
+            function flipTurn(playerTurn) {
+                switch (playerTurn) {
+                    case X:
+                        return O;
+                        
+                    case O:
+                        return X;
+                        
+                    default:
+                        throw "Should not get here.";
+                }
+            }
+
+            const output = document.getElementById('output-text-div');
+            
+            let turnNumber = 1;
+            
+            function getTurnNumberString() {
+                if (turnNumber % 10 === 1) {
+                    return turnNumber + "st";
+                }
+                
+                if (turnNumber % 10 === 2) {
+                    return turnNumber + "nd";
+                }
+                
+                if (turnNumber % 10 === 3) {
+                    return turnNumber + "rd";
+                }
+                
+                return turnNumber + "th";
+            }
+
+            let state = new ConnectFourBoard();
+            output.innerHTML += state.toString() + "<br/>";
+
+            function millis() {
+                return new Date().valueOf();
+            }
+            
+            let totalDurationX = 0;
+            let totalDurationO = 0;
+            
+            let turn = X;
+            
+            function getEngineName(engine) {
+                let str = "";
+                
+                switch (engine) {
+                    case alphaBetaPruningSearchEngine:
+                        str += "Alpha-beta pruning engine";
+                        break;
+                        
+                    case negamaxSearchEngine:
+                        str += "Negamax engine";
+                        break;
+                        
+                    case pvsSearchEngine:
+                        str += "PVS engine";
+                        break;
+                        
+                    default:
+                        throw "Should not get here.";
+                }
+                
+                if (engine === engineX) {
+                    return str + " (X)";
+                } else if (engine === engineO) {
+                    return str + " (O)";
+                } else {
+                    throw "Should not get here.";
+                }
+            }
+            
+            function gameLoop() {
+                setTimeout(() => {
+                    let ta = millis();
+                    state = engine.search(state, depth, turn);
+                    let tb = millis();
+                    
+                    if (turn === X) {
+                        totalDurationX += tb - ta;
+                    } else {
+                        totalDurationO += tb - ta;
+                    }
+                    
+                    output.innerHTML += state.toString();
+                    output.innerHTML += "<br/>";
+                    output.innerHTML += 
+                            turn === X ? 
+                                getEngineName(engine)
+                                        + " made the "
+                                        + getTurnNumberString()
+                                        + " turn, duration: " 
+                                        + (tb - ta) 
+                                        + " milliseconds.<br/>"
+                                :
+                                getEngineName(engine) 
+                                        + " made the "
+                                        + getTurnNumberString()
+                                        + " turn, duration: " 
+                                        + (tb - ta) 
+                                        + " milliseconds.<br/>";
+                                
+                    turnNumber++;
+                                
+                    if (state.isTie()) {
+                        output.innerHTML += "RESULT: It's a tie.<br/>";
+                        return;
+                    }
+                    
+                    if (turn === X) {
+                        if (state.isWinningFor(X)) {
+                            output.innerHTML += "RESULT: X won.<br/>";
+                            output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
+                            output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
+                            window.scrollTo(0, document.body.scrollHeight);
+                            return;
+                        }
+                    } else {
+                        if (state.isWinningFor(O)) {
+                            output.innerHTML += "RESULT: O won.<br/>";
+                            output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
+                            output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
+                            window.scrollTo(0, document.body.scrollHeight);
+                            return;
+                        }
+                    }
+                    
+                    function flipEngine(engine) {
+                        if (engine === engineX) {
+                            return engineO;
+                        }
+                        
+                        if (engine === engineO) {
+                            return engineX;
+                        }
+                        
+                        throw "Should not get here.";
+                    }
+                    
+                    turn = flipTurn(turn);
+                    engine = flipEngine(engine);
+                    
+                    if (!state.isTerminal()) {
+                        // Run the next frame:
+                        window.scrollTo(0, document.body.scrollHeight);
+                        requestAnimationFrame(gameLoop);
+                    } else {
+                    }
+                }, 0);
+            }
+            
+//            gameLoop();
         </script>
     </body>
 </html>
