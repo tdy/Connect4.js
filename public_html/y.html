@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <script>
+            let i = 0;
+            
+            function render() {
+                console.log(i++);
+                
+                if (i === 60) {
+                    return;
+                }
+                
+                window.requestAnimationFrame(render);
+            }
+            
+            render();
+        </script>
+    </body>
+</html>
