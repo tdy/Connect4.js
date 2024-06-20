@@ -146,7 +146,8 @@
                 oDepth = getODepth();
                 engine = xEngine;
                 depth = xDepth;
-                gameLoop();
+                window.requestAnimationFrame(gameLoop);
+//                gameLoop();
             }
 
             function flipTurn(playerTurn) {
@@ -235,7 +236,7 @@
                 }
             }
             
-            function gameLoop() {
+            async function gameLoop() {
                 console.log("gameLoop");
                 
                 let ta = millis();
@@ -307,11 +308,13 @@
                 depth  = flipDepth(depth);
                 engine = flipEngine(engine);
 
-                window.scrollTo(0, document.body.scrollHeight);
-                window.requestAnimationFrame(gameLoop);
-//                if (!state.isTerminal()) {
-//                    // Run the next frame:
-//                }
+                if (!state.isTerminal()) {
+                    // Run the next frame:
+                    window.scrollTo(0, document.body.scrollHeight);
+                    window.requestAnimationFrame(gameLoop);
+                } else {
+                    return;
+                }
             }
         </script>
     </body>
