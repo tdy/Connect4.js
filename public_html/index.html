@@ -236,8 +236,7 @@
                 }
             }
             
-            async function gameLoop() {
-                console.log("gameLoop");
+            function gameLoop() {
                 
                 let ta = millis();
                 state = engine.search(state, depth, turn);
