@@ -83,14 +83,19 @@
             <button type="button" onclick="runMatch();">RUN MATCH!</button>
         </div>
         
-        <div id="clearButtonDiv" class="paramDivs">
+        <div class="paramDivs">
+            <button type="button" onclick="clearOutput();">Clear output</button>
         </div>
-        
-        <!--<div id="runButton"><button onclick="runMatch();">RUN MATCH!</button></div>-->
         
         <pre id='output-text-div'></pre>
         <script src='js/connect4ai.js'></script>
         <script>
+            
+            function clearOutput() {
+                const output = document.getElementById("output-text-div");
+                output.innerHTML = "";
+                alert("clear output");
+            }
             
             const heuristicFunction            = new ConnectFourHeuristicFunction();
             const alphaBetaPruningSearchEngine = new ConnectFourAlphaBetaPruningSearchEngine(heuristicFunction);
@@ -107,7 +112,6 @@
             let xDepth;
             let yDepth;
             
-            let state;
             let turn;
             
             function nameToEngine(name) {
@@ -124,20 +128,6 @@
                     default:
                         throw "Should not get here.";
                 }
-            }
-            
-            function addEmptyOutputButton(output) {
-                const buttonElement = document.createElement("button");
-                
-                buttonElement.onclick = () => { 
-                    output.innerHTML = ""; 
-                    document.getElementById("clearButtonDiv")
-                            .remove(buttonElement);
-                };
-                
-                buttonElement.value = "value";
-                document.getElementById("clearButtonDiv")
-                        .appendChild(buttonElement);
             }
             
             function getXEngine() {
@@ -168,6 +158,7 @@
                 output.innerHTML = "";
                 
                 state = new ConnectFourBoard();
+                alert("state new");
                 turn = X;
                 
                 totalDurationO = 0;
@@ -261,8 +252,7 @@
                 }
             }
             
-            function gameLoop() {
-                
+            function gameLoop() {                
                 let ta = millis();
                 state = engine.search(state, depth, turn);
                 let tb = millis();
@@ -295,7 +285,6 @@
 
                 if (state.isTie()) {
                     output.innerHTML += "RESULT: It's a tie.<br/>";
-                    addEmptyOutputButton(output);
                     window.scrollTo(0, document.body.scrollHeight);
                     return;
                 }
@@ -305,7 +294,6 @@
                         output.innerHTML += "RESULT: X won.<br/>";
                         output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
                         output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
-                        addEmptyOutputButton(output);
                         window.scrollTo(0, document.body.scrollHeight);
                         return;
                     }
@@ -314,7 +302,6 @@
                         output.innerHTML += "RESULT: O won.<br/>";
                         output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
                         output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
-                        addEmptyOutputButton(output);
                         window.scrollTo(0, document.body.scrollHeight);
                         return;
                     }
@@ -339,7 +326,7 @@
                 if (!state.isTerminal()) {
                     // Run the next frame:
                     window.scrollTo(0, document.body.scrollHeight);
-                    window.requestAnimationFrame(gameLoop);
+                    window.requestAnimationFrame(gameLoop, null);
                 } else {
                     alert("done!");
                     return;
