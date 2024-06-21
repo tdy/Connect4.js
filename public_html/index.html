@@ -77,11 +77,14 @@
                 </tr>
             </table>
             </div>
-            
-            <div class="paramDivs">
-                <button onclick="runMatch();">RUN MATCH!</button>
-            </div>
         </form>
+
+        <div class="paramDivs">
+            <button type="button" onclick="runMatch();">RUN MATCH!</button>
+        </div>
+        
+        <div id="clearButtonDiv" class="paramDivs">
+        </div>
         
         <!--<div id="runButton"><button onclick="runMatch();">RUN MATCH!</button></div>-->
         
@@ -94,10 +97,18 @@
             const negamaxSearchEngine          = new ConnectFourNegamaxSearchEngine(heuristicFunction);
             const pvsSearchEngine              = new ConnectFourPrincipalVariationSearchEngine(heuristicFunction);
             
+            const output = document.getElementById('output-text-div');
+            
+            let totalDurationO;
+            let totalDurationX;
+            
             let xEngine;
             let oEngine;
             let xDepth;
             let yDepth;
+            
+            let state;
+            let turn;
             
             function nameToEngine(name) {
                 switch (name) {
@@ -113,6 +124,20 @@
                     default:
                         throw "Should not get here.";
                 }
+            }
+            
+            function addEmptyOutputButton(output) {
+                const buttonElement = document.createElement("button");
+                
+                buttonElement.onclick = () => { 
+                    output.innerHTML = ""; 
+                    document.getElementById("clearButtonDiv")
+                            .remove(buttonElement);
+                };
+                
+                buttonElement.value = "value";
+                document.getElementById("clearButtonDiv")
+                        .appendChild(buttonElement);
             }
             
             function getXEngine() {
@@ -140,14 +165,22 @@
             }
             
             function runMatch() {
+                output.innerHTML = "";
+                
+                state = new ConnectFourBoard();
+                turn = X;
+                
+                totalDurationO = 0;
+                totalDurationX = 0;
+                
                 xEngine = getXEngine();
                 oEngine = getOEngine();
-                xDepth = getXDepth();
-                oDepth = getODepth();
-                engine = xEngine;
-                depth = xDepth;
+                xDepth  = getXDepth();
+                oDepth  = getODepth();
+                engine  = xEngine;
+                depth   = xDepth;
+                
                 window.requestAnimationFrame(gameLoop);
-//                gameLoop();
             }
 
             function flipTurn(playerTurn) {
@@ -174,8 +207,6 @@
                 
                 throw "Should not get here.";
             }
-
-            const output = document.getElementById('output-text-div');
             
             let turnNumber = 1;
             
@@ -195,17 +226,11 @@
                 return turnNumber + "th";
             }
 
-            let state = new ConnectFourBoard();
             output.innerHTML += state.toString() + "<br/>";
 
             function millis() {
                 return new Date().valueOf();
             }
-            
-            let totalDurationX = 0;
-            let totalDurationO = 0;
-            
-            let turn = X;
             
             function getEngineName(engine) {
                 let str = "";
@@ -270,6 +295,8 @@
 
                 if (state.isTie()) {
                     output.innerHTML += "RESULT: It's a tie.<br/>";
+                    addEmptyOutputButton(output);
+                    window.scrollTo(0, document.body.scrollHeight);
                     return;
                 }
 
@@ -278,6 +305,7 @@
                         output.innerHTML += "RESULT: X won.<br/>";
                         output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
                         output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
+                        addEmptyOutputButton(output);
                         window.scrollTo(0, document.body.scrollHeight);
                         return;
                     }
@@ -286,6 +314,7 @@
                         output.innerHTML += "RESULT: O won.<br/>";
                         output.innerHTML += "X AI total duration: " + totalDurationX + " milliseconds.<br/>";
                         output.innerHTML += "O AI total duration: " + totalDurationO + " milliseconds.<br/>";
+                        addEmptyOutputButton(output);
                         window.scrollTo(0, document.body.scrollHeight);
                         return;
                     }
@@ -312,6 +341,7 @@
                     window.scrollTo(0, document.body.scrollHeight);
                     window.requestAnimationFrame(gameLoop);
                 } else {
+                    alert("done!");
                     return;
                 }
             }
