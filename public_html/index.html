@@ -77,27 +77,51 @@
                 </tr>
             </table>
             </div>
-            
-            <div class="paramDivs">
-                <button onclick="runMatch();">RUN MATCH!</button>
-            </div>
         </form>
-        
-        <!--<div id="runButton"><button onclick="runMatch();">RUN MATCH!</button></div>-->
+
+        <div class="paramDivs">
+            <button type="button" onclick="runMatch();">RUN MATCH!</button>
+        </div>
         
         <pre id='output-text-div'></pre>
+        
+        <div class="paramDivs">
+            <button type="button" onclick="clearOutput();">Clear output</button>
+        </div>
+        
         <script src='js/connect4ai.js'></script>
+        <script src="js/MatchRunner.js"></script>
+        
         <script>
             
+            let matchRunner;
+            
+            function runMatch() {
+                matchRunner = 
+                        new MatchRunner(
+                                getXEngine(),
+                                getOEngine(),
+                                getXEngineDepth(),
+                                getOEngineDepth(),
+                                document.getElementById("output-text-div"));
+            }
+            
+            function stopMatch() {
+                if (matchRunner) {
+                    matchRunner.halt();
+                }
+                
+                const output = document.getElementById("output-text-div");
+                output.innerHTML = "";
+                alert("clear output");
+            }
+            
             const heuristicFunction            = new ConnectFourHeuristicFunction();
-            const alphaBetaPruningSearchEngine = new ConnectFourAlphaBetaPruningSearchEngine(heuristicFunction);
-            const negamaxSearchEngine          = new ConnectFourNegamaxSearchEngine(heuristicFunction);
+            const alphaBetaPruningSearchEngine = new ConnectFourAlphaBetaPruningSearchEngine  (heuristicFunction);
+            const negamaxSearchEngine          = new ConnectFourNegamaxSearchEngine           (heuristicFunction);
             const pvsSearchEngine              = new ConnectFourPrincipalVariationSearchEngine(heuristicFunction);
             
-            let xEngine;
-            let oEngine;
-            let xDepth;
-            let yDepth;
+            const output = document.getElementById('output-text-div');
             
             function nameToEngine(name) {
                 switch (name) {
@@ -140,14 +164,23 @@
             }
             
             function runMatch() {
+                output.innerHTML = "";
+                
+                state = new ConnectFourBoard();
+                alert("state new");
+                turn = X;
+                
+                totalDurationO = 0;
+                totalDurationX = 0;
+                
                 xEngine = getXEngine();
                 oEngine = getOEngine();
-                xDepth = getXDepth();
-                oDepth = getODepth();
-                engine = xEngine;
-                depth = xDepth;
+                xDepth  = getXDepth();
+                oDepth  = getODepth();
+                engine  = xEngine;
+                depth   = xDepth;
+                
                 window.requestAnimationFrame(gameLoop);
-//                gameLoop();
             }
 
             function flipTurn(playerTurn) {
@@ -174,8 +207,6 @@
                 
                 throw "Should not get here.";
             }
-
-            const output = document.getElementById('output-text-div');
             
             let turnNumber = 1;
             
@@ -195,17 +226,11 @@
                 return turnNumber + "th";
             }
 
-            let state = new ConnectFourBoard();
             output.innerHTML += state.toString() + "<br/>";
 
             function millis() {
                 return new Date().valueOf();
             }
-            
-            let totalDurationX = 0;
-            let totalDurationO = 0;
-            
-            let turn = X;
             
             function getEngineName(engine) {
                 let str = "";
@@ -236,9 +261,7 @@
                 }
             }
             
-            async function gameLoop() {
-                console.log("gameLoop");
-                
+            function gameLoop() {                
                 let ta = millis();
                 state = engine.search(state, depth, turn);
                 let tb = millis();
@@ -271,6 +294,7 @@
 
                 if (state.isTie()) {
                     output.innerHTML += "RESULT: It's a tie.<br/>";
+                    window.scrollTo(0, document.body.scrollHeight);
                     return;
                 }
 
@@ -311,8 +335,9 @@
                 if (!state.isTerminal()) {
                     // Run the next frame:
                     window.scrollTo(0, document.body.scrollHeight);
-                    window.requestAnimationFrame(gameLoop);
+                    window.requestAnimationFrame(gameLoop, null);
                 } else {
+                    alert("done!");
                     return;
                 }
             }
