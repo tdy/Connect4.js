@@ -840,17 +840,6 @@ class ConnectFourNegamaxSearchEngine {
                 value = score;
                 bestMoveState = new ConnectFourBoard(root);
             }
-//            if (color === -1) {
-//                if (value < score) {
-//                    value = score;
-//                    bestMoveState = new ConnectFourBoard(root);
-//                }
-//            } else {
-//                if (value > score) {
-//                    value = score;
-//                    bestMoveState = new ConnectFourBoard(root);
-//                }
-//            }
             
             root.unmakePly(x);
             
@@ -953,18 +942,6 @@ class ConnectFourPrincipalVariationSearchEngine {
                 value = score;
                 bestMoveState = new ConnectFourBoard(root);
             }
-                               
-//            if (color === +1) {
-//                if (value < score) {
-//                    value = score;
-//                    bestMoveState = new ConnectFourBoard(root);
-//                }
-//            } else {
-//                if (value > score) {
-//                    value = score;
-//                    bestMoveState = new ConnectFourBoard(root);
-//                }
-//            }
             
             root.unmakePly(x);
             
