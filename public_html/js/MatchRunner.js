@@ -11,7 +11,7 @@ class MatchRunner {
     #currentEngineDepth;
     #currentEngineTurn;
     
-    #currentTurnNumber = 1;
+    #currentTurnNumber = MatchRunner.#X;
     #keepRunning       = false;
     #currentState      = new ConnectFourBoard();
     #totalDurationX    = 0;
@@ -62,8 +62,8 @@ class MatchRunner {
         this.#currentState =
                 this.#currentEngineTurn.search(
                     this.#currentState, 
-                    this.#currentEngineDepth, 
-                    this.#currentTurnNumber);
+                    this.#currentEngineDepth,
+                    this.#getPlayerEnum());
         
         const endTime = this.#millis();
         const duration = endTime - startTime;
@@ -77,20 +77,21 @@ class MatchRunner {
         this.#outputDiv.innerHTML += this.#currentState.toString();
         this.#outputDiv.innerHTML += "<br/>";
         
-        const turnNumberString = this.#getCurrentEngineName();
+        const turnEngineName = this.#getCurrentEngineName();
+        const turnNumeral = this.#getTurnNumberString();;
         
         this.#outputDiv.innerHTML += 
                 this.#currentEngineTurn === this.#engineX ? 
-                    turnNumberString 
+                    turnEngineName 
                             + " made the "
-                            + turnNumberString 
+                            + turnNumeral 
                             + " turn, duration: "
                             + (endTime - startTime) 
                             + " milliseconds.<br/>"
                     :
-                    turnNumberString 
+                    turnEngineName
                             + " made the "
-                            + turnNumberString
+                            + turnNumeral
                             + " turn, duration: "
                             + (endTime - startTime)
                             + " milliseconds.<br/>";
@@ -130,7 +131,19 @@ class MatchRunner {
             }
         }
         
+        this.#flipCurrentEngineTurn();
+        this.#flipDepth();
+        
+        window.scrollTo(0, document.body.scrollHeight);
         window.requestAnimationFrame(() => this.#gameLoop());
+    }
+    
+    #getPlayerEnum() {
+        if (this.#currentEngineTurn === this.#engineX) {
+            return MatchRunner.#X;
+        } else {
+            return MatchRunner.#O;
+        }
     }
     
     #getDurationReport() {
@@ -146,18 +159,18 @@ class MatchRunner {
     
     #flipCurrentEngineTurn() {
         if (this.#currentEngineTurn === this.#engineX) {
-            return this.#engineDepthO;
+            this.#currentEngineTurn = this.#engineO;
+        } else {
+            this.#currentEngineTurn = this.#engineX;
         }
-        
-        return this.#engineX;
     }
     
     #flipDepth() {
         if (this.#currentEngineDepth === this.#engineDepthX) {
-            return this.#engineDepthO;
+            this.#currentEngineDepth = this.#engineDepthO;
+        } else {
+            this.#currentEngineDepth = this.#engineDepthX;
         }
-        
-        return this.#engineDepthX;
     }
     
     #getTurnNumberString() {
