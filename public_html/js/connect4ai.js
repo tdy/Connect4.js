@@ -9,10 +9,10 @@ const BOARD_FILL_STYLE = '#3879e0';
 const PLIES = [ 3, 2, 4, 1, 5, 0, 6 ];
 
 class ConnectFourHeuristicFunction {
-    static #TWO_BLOCKS_SCORE = 1.0;
-    static #THREE_BLOCKS_SCORE = 10.0;
-    static #MINIMIZING_PLAYER_VICTORY_SCORE = -10E6;
-    static #MAXIMIZING_PLAYER_VICTORY_SCORE = +10E6;
+    static #TWO_BLOCKS_SCORE = 1;
+    static #THREE_BLOCKS_SCORE = 10;
+    static #MINIMIZING_PLAYER_VICTORY_SCORE = -1000000;
+    static #MAXIMIZING_PLAYER_VICTORY_SCORE = +1000000;
     
     evaluate(state, depth) {
         if (state.isWinningFor(X)) {
@@ -42,7 +42,7 @@ class ConnectFourHeuristicFunction {
     }
     
     #evaluate2Horizontal(state) {
-        let sum = 0.0;
+        let sum = 0;
         
         for (let y = 0; y < ROWS; y++) {
             for (let x = 0; x < COLUMNS - 1; x++) {
@@ -61,7 +61,7 @@ class ConnectFourHeuristicFunction {
     }
     
     #evaluate2Vertical(state) {
-        let sum = 0.0;
+        let sum = 0;
         
         for (let y = 0; y < ROWS - 1; y++) {
             for (let x = 0; x < COLUMNS; x++) {
@@ -81,7 +81,7 @@ class ConnectFourHeuristicFunction {
     }
     
     #evaluate2Ascending(state) {
-        let sum = 0.0;
+        let sum = 0;
         
         for (let y = ROWS - 1; y > 0; y--) {
             for (let x = 0; x < COLUMNS - 1; x++) {
@@ -100,7 +100,7 @@ class ConnectFourHeuristicFunction {
     }
     
     #evaluate2Descending(state) {
-        let sum = 0.0;
+        let sum = 0;
         
         for (let y = ROWS - 1; y > 0; y--) {
             for (let x = 1; x < COLUMNS; x++) {
@@ -120,7 +120,7 @@ class ConnectFourHeuristicFunction {
     }
     
     #evaluate3Horizontal(state) {
-        let sum = 0.0;
+        let sum = 0;
         
         for (let y = 0; y < ROWS; y++) {
             for (let x = 0; x < COLUMNS - 2; x++) {
@@ -142,7 +142,7 @@ class ConnectFourHeuristicFunction {
     }
     
     #evaluate3Vertical(state) {
-        let sum = 0.0;
+        let sum = 0;
         
         for (let y = 0; y < ROWS - 2; y++) {
             for (let x = 0; x < COLUMNS; x++) {
@@ -164,7 +164,7 @@ class ConnectFourHeuristicFunction {
     }
     
     #evaluate3Ascending(state) {
-        let sum = 0.0;
+        let sum = 0;
         
         for (let y = ROWS - 1; y > 1; y--) {
             for (let x = 0; x < COLUMNS - 2; x++) {
@@ -186,7 +186,7 @@ class ConnectFourHeuristicFunction {
     }
     
     #evaluate3Descending(state) {
-        let sum = 0.0;
+        let sum = 0;
         
         for (let y = ROWS - 1; y > 1; y--) {
             for (let x = 2; x < COLUMNS; x++) {
@@ -668,9 +668,9 @@ class ConnectFourAlphaBetaPruningSearchEngine {
         if (playerType === O) {
             
             // Try to maximize the value:
-            let alpha = Number.NEGATIVE_INFINITY;
-            let value = Number.NEGATIVE_INFINITY;
-            let tentativeValue = Number.NEGATIVE_INFINITY;
+            let alpha = Number.MIN_SAFE_INTEGER;
+            let value = Number.MIN_SAFE_INTEGER;
+            let tentativeValue = Number.MIN_SAFE_INTEGER;
             
             for (const x of PLIES) {
                 if (!root.makePly(x, O)) {
@@ -696,9 +696,9 @@ class ConnectFourAlphaBetaPruningSearchEngine {
             }
         } else {
             
-            let beta  = Number.POSITIVE_INFINITY;
-            let value = Number.POSITIVE_INFINITY;
-            let tentativeValue = Number.POSITIVE_INFINITY;
+            let beta  = Number.MAX_SAFE_INTEGER;
+            let value = Number.MAX_SAFE_INTEGER;
+            let tentativeValue = Number.MAX_SAFE_INTEGER;
             
             for (const x of PLIES) {
                 if (!root.makePly(x, X)) {
@@ -736,7 +736,7 @@ class ConnectFourAlphaBetaPruningSearchEngine {
         }
         
         if (playerType === O) {
-            let value = Number.NEGATIVE_INFINITY;
+            let value = Number.MIN_SAFE_INTEGER;
             
             for (const x of PLIES) {
                 if (!state.makePly(x, O)) {
@@ -804,14 +804,14 @@ class ConnectFourNegamaxSearchEngine {
         if (playerType === O) {
             return this.#negamaxRoot(root,
                                      depth,
-                                     Number.NEGATIVE_INFINITY,
-                                     Number.POSITIVE_INFINITY,
+                                     Number.MIN_SAFE_INTEGER,
+                                     Number.MAX_SAFE_INTEGER,
                                      +1);
         } else {
             return this.#negamaxRoot(root,
                                      depth,
-                                     Number.NEGATIVE_INFINITY,
-                                     Number.POSITIVE_INFINITY,
+                                     Number.MIN_SAFE_INTEGER,
+                                     Number.MAX_SAFE_INTEGER,
                                      -1);
         }
     }
@@ -822,7 +822,7 @@ class ConnectFourNegamaxSearchEngine {
                  beta,
                  color) {
         
-        let value = Number.NEGATIVE_INFINITY;
+        let value = Number.MIN_SAFE_INTEGER;
         let bestMoveState = null;
         
         for (const x of PLIES) {
@@ -872,7 +872,7 @@ class ConnectFourNegamaxSearchEngine {
             return color * this.#heuristicFunction.evaluate(root, depth);
         }
         
-        let value = Number.NEGATIVE_INFINITY;
+        let value = Number.MIN_SAFE_INTEGER;
         
         for (const x of PLIES) {
             if (!root.makePly(x, color === 1 ? O : X)) {
@@ -916,14 +916,14 @@ class ConnectFourPrincipalVariationSearchEngine {
         if (playerType === O) {
             return this.#pvsRoot(root,
                                  depth,
-                                 Number.NEGATIVE_INFINITY,
-                                 Number.POSITIVE_INFINITY,
+                                 Number.MIN_SAFE_INTEGER,
+                                 Number.MAX_SAFE_INTEGER,
                                  +1);
         } else {
             return this.#pvsRoot(root,
                                  depth,
-                                 Number.NEGATIVE_INFINITY,
-                                 Number.POSITIVE_INFINITY,
+                                 Number.MIN_SAFE_INTEGER,
+                                 Number.MAX_SAFE_INTEGER,
                                  -1);
         }
     }
@@ -934,7 +934,7 @@ class ConnectFourPrincipalVariationSearchEngine {
              beta,
              color) {
                  
-        let value = Number.NEGATIVE_INFINITY;
+        let value = Number.MIN_SAFE_INTEGER;
         let bestMoveState = null;
         
         for (const x of PLIES) {
@@ -1005,7 +1005,7 @@ class ConnectFourPrincipalVariationSearchEngine {
                             
             } else {
                 score = -this.#pvs(root, 
-                                   depth -1, 
+                                   depth - 1, 
                                    -alpha - 1, 
                                    -alpha, 
                                    -color);

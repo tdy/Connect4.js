@@ -111,10 +111,8 @@
             function haltMatch() {
                 if (matchRunner) {
                     matchRunner.halt();
-                    alert("halt");
+                    matchRunner = null;
                 }
-                
-                alert("no halt");
             }
             
             function runMatch() {
