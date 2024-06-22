@@ -98,34 +98,37 @@ class MatchRunner {
         this.#currentTurnNumber++;
         
         if (this.#currentState.isTie()) {
-            this.#outputDiv.innerHTML += "RESULT: It's a tie.<br/>";
             this.#keepRunning = false;
+            this.#outputDiv.innerHTML += "RESULT: It's a tie.<br/>";
+            this.#outputDiv.innerHTML += this.#getDurationReport();
             window.scrollTo(0, document.body.scrollHeight);
             return;
         }
         
         if (this.#currentEngineTurn === this.#engineX) {
             if (this.#currentState.isWinningFor(MatchRunner.#X)) {
+                this.#keepRunning = false;
+                
                 this.#outputDiv.innerHTML += 
                         "RESULT: " 
                         + this.#currentEngineTurn.getName() 
                         + " (X) won.<br/>";
                 
-                this.#outputDiv.innerHTML += getDurationReport();
+                this.#outputDiv.innerHTML += this.#getDurationReport();
                 window.scrollTo(0, document.body.scrollHeight);
-                this.#keepRunning = false;
                 return;
             }
         } else {
             if (this.#currentState.isWinningFor(MatchRunner.#O)) {
+                this.#keepRunning = false;
+                
                 this.#outputDiv.innerHTML += 
                         "RESULT: " 
                         + this.#currentEngineTurn.getName() 
                         + " (O) won.<br/>";
                 
-                this.#outputDiv.innerHTML += getDurationReport();
+                this.#outputDiv.innerHTML += this.#getDurationReport();
                 window.scrollTo(0, document.body.scrollHeight);
-                this.#keepRunning = false;
                 return;
             }
         }
