@@ -35,7 +35,7 @@ class MatchRunner {
     
     halt() {
         this.#keepRunning = false;
-        this.#outputDiv.innerHTML += "Match halted!";
+        this.#outputDiv.innerHTML += "Match halted! Stopping prematurely...";
     }
     
     clearOutput() {
@@ -52,7 +52,6 @@ class MatchRunner {
     
     #gameLoop() {
         if (!this.#keepRunning) {
-            this.#outputDiv.innerHTML += "Stopped prematurely.";
             window.scrollTo(0, document.body.scrollHeight);
             return;
         }
