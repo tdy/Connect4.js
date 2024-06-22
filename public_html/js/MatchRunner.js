@@ -129,6 +129,8 @@ class MatchRunner {
                 return;
             }
         }
+        
+        window.requestAnimationFrame(() => this.#gameLoop());
     }
     
     #getDurationReport() {
@@ -181,7 +183,7 @@ class MatchRunner {
     }
     
     #getCurrentEngineName() {
-        if (this.#currentTurnEngine === this.#engineX) {
+        if (this.#currentEngineTurn === this.#engineX) {
             return this.#engineX.getName() + " (X)";
         }
         
