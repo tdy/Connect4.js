@@ -1,59 +1,66 @@
 class MatchRunner {
+    
+    static #X = 1;
+    static #O = 0;
+    
     #engineX;
-    #engineY;
+    #engineO;
     #engineDepthX;
     #engineDepthO;
-    #engineXName;
-    #engineOName;
     #outputDiv;
     #currentEngineDepth;
+    #currentEngineTurn;
     
     #currentTurnNumber = 1;
     #keepRunning       = false;
     #currentState      = new ConnectFourBoard();
-    #currentTurnEngine = #engineX;
     #totalDurationX    = 0;
-    #totalDurationY    = 0;
+    #totalDurationO    = 0;
     
     constructor() {
         this.#engineX            = arguments[0];
         this.#engineO            = arguments[1];
         this.#engineDepthX       = arguments[2];
         this.#engineDepthO       = arguments[3];
-        this.#engineXName        = arguments[4];
-        this.#engineOName        = arguments[5];
-        this.#outputDiv          = arguments[6];
+        this.#outputDiv          = arguments[4];
+        this.#currentEngineTurn  = this.#engineX;
         this.#currentEngineDepth = this.#engineDepthX;
     }
     
     start() {
         this.#keepRunning = true;
-        this.#clearOutput();
-        
-        
+        this.clearOutput();
+        this.#gameLoop();
     }
     
     halt() {
         this.#keepRunning = false;
+        this.#outputDiv.innerHTML += "Match halted!";
+    }
+    
+    clearOutput() {
+        this.#outputDiv.innerHTML = "";
     }
     
     getTotalDurationX() {
         return this.#totalDurationX;
     }
     
-    getTotalDurationo() {
+    getTotalDurationO() {
         return this.#totalDurationO;
     }
     
-    #clearOutput() {
-        this.#outputDiv.innerHTML = "";
-    }
-    
     #gameLoop() {
+        if (!this.#keepRunning) {
+            this.#outputDiv.innerHTML += "Stopped prematurely.";
+            window.scrollTo(0, document.body.scrollHeight);
+            return;
+        }
+        
         const startTime = this.#millis();
         
         this.#currentState =
-                this.#currentTurnEngine.search(
+                this.#currentEngineTurn.search(
                     this.#currentState, 
                     this.#currentEngineDepth, 
                     this.#currentTurnNumber);
@@ -61,7 +68,7 @@ class MatchRunner {
         const endTime = this.#millis();
         const duration = endTime - startTime;
         
-        if (this.#currentTurnEngine === this.#engineX) {
+        if (this.#currentEngineTurn === this.#engineX) {
             this.#totalDurationX += duration;
         } else {
             this.#totalDurationO += duration;
@@ -72,18 +79,71 @@ class MatchRunner {
         
         const turnNumberString = this.#getCurrentEngineName();
         
-        
         this.#outputDiv.innerHTML += 
-                this.#currentTurnEngine === this.#engineX ? 
+                this.#currentEngineTurn === this.#engineX ? 
                     turnNumberString 
                             + " made the "
+                            + turnNumberString 
+                            + " turn, duration: "
+                            + (endTime - startTime) 
+                            + " milliseconds.<br/>"
                     :
-                            "";
+                    turnNumberString 
+                            + " made the "
+                            + turnNumberString
+                            + " turn, duration: "
+                            + (endTime - startTime)
+                            + " milliseconds.<br/>";
                     
+        this.#currentTurnNumber++;
+        
+        if (this.#currentState.isTie()) {
+            this.#outputDiv.innerHTML += "RESULT: It's a tie.<br/>";
+            this.#keepRunning = false;
+            window.scrollTo(0, document.body.scrollHeight);
+            return;
+        }
+        
+        if (this.#currentEngineTurn === this.#engineX) {
+            if (this.#currentState.isWinningFor(MatchRunner.#X)) {
+                this.#outputDiv.innerHTML += 
+                        "RESULT: " 
+                        + this.#currentEngineTurn.getName() 
+                        + " (X) won.<br/>";
+                
+                this.#outputDiv.innerHTML += getDurationReport();
+                window.scrollTo(0, document.body.scrollHeight);
+                this.#keepRunning = false;
+                return;
+            }
+        } else {
+            if (this.#currentState.isWinningFor(MatchRunner.#O)) {
+                this.#outputDiv.innerHTML += 
+                        "RESULT: " 
+                        + this.#currentEngineTurn.getName() 
+                        + " (O) won.<br/>";
+                
+                this.#outputDiv.innerHTML += getDurationReport();
+                window.scrollTo(0, document.body.scrollHeight);
+                this.#keepRunning = false;
+                return;
+            }
+        }
+    }
+    
+    #getDurationReport() {
+        return this.#engineX.getName() 
+                + " (X) total duration: "
+                + this.#totalDurationX 
+                + " milliseconds.<br/>"
+                + this.#engineO.getName()
+                + " (O) total duration: " 
+                + this.#totalDurationO 
+                + " milliseconds.<br/>";
     }
     
     #flipCurrentEngineTurn() {
-        if (this.#currentTurnEngine === this.#engineX) {
+        if (this.#currentEngineTurn === this.#engineX) {
             return this.#engineDepthO;
         }
         
@@ -122,11 +182,9 @@ class MatchRunner {
     
     #getCurrentEngineName() {
         if (this.#currentTurnEngine === this.#engineX) {
-            return this.#engineXName + " (X)";
+            return this.#engineX.getName() + " (X)";
         }
         
-        return this.#engineOName + " (O)";
+        return this.#engineO.getName() + " (O)";
     }
-    
-    
 }

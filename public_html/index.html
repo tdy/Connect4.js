@@ -83,36 +83,45 @@
             <button type="button" onclick="runMatch();">RUN MATCH!</button>
         </div>
         
+        <pre id='output-text-div'></pre>
+        
         <div class="paramDivs">
             <button type="button" onclick="clearOutput();">Clear output</button>
         </div>
         
-        <pre id='output-text-div'></pre>
         <script src='js/connect4ai.js'></script>
+        <script src="js/MatchRunner.js"></script>
+        
         <script>
             
-            function clearOutput() {
+            let matchRunner;
+            
+            function runMatch() {
+                matchRunner = 
+                        new MatchRunner(
+                                getXEngine(),
+                                getOEngine(),
+                                getXEngineDepth(),
+                                getOEngineDepth(),
+                                document.getElementById("output-text-div"));
+            }
+            
+            function stopMatch() {
+                if (matchRunner) {
+                    matchRunner.halt();
+                }
+                
                 const output = document.getElementById("output-text-div");
                 output.innerHTML = "";
                 alert("clear output");
             }
             
             const heuristicFunction            = new ConnectFourHeuristicFunction();
-            const alphaBetaPruningSearchEngine = new ConnectFourAlphaBetaPruningSearchEngine(heuristicFunction);
-            const negamaxSearchEngine          = new ConnectFourNegamaxSearchEngine(heuristicFunction);
+            const alphaBetaPruningSearchEngine = new ConnectFourAlphaBetaPruningSearchEngine  (heuristicFunction);
+            const negamaxSearchEngine          = new ConnectFourNegamaxSearchEngine           (heuristicFunction);
             const pvsSearchEngine              = new ConnectFourPrincipalVariationSearchEngine(heuristicFunction);
             
             const output = document.getElementById('output-text-div');
-            
-            let totalDurationO;
-            let totalDurationX;
-            
-            let xEngine;
-            let oEngine;
-            let xDepth;
-            let yDepth;
-            
-            let turn;
             
             function nameToEngine(name) {
                 switch (name) {
