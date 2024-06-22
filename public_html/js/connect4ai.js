@@ -830,25 +830,27 @@ class ConnectFourNegamaxSearchEngine {
                 continue;
             }
             
-            const score = 
-                    -this.#negamax(root,
-                                   depth - 1,
-                                   -beta,
-                                   -alpha,
-                                   -color);
-            
-            
-            if (color === +1) {
-                if (value < score) {
-                    value = score;
-                    bestMoveState = new ConnectFourBoard(root);
-                }
-            } else {
-                if (value > score) {
-                    value = score;
-                    bestMoveState = new ConnectFourBoard(root);
-                }
+            const score = -this.#negamax(root,
+                                         depth - 1,
+                                         -beta,
+                                         -alpha,
+                                         -color);  
+                                         
+            if (value < score) {
+                value = score;
+                bestMoveState = new ConnectFourBoard(root);
             }
+//            if (color === -1) {
+//                if (value < score) {
+//                    value = score;
+//                    bestMoveState = new ConnectFourBoard(root);
+//                }
+//            } else {
+//                if (value > score) {
+//                    value = score;
+//                    bestMoveState = new ConnectFourBoard(root);
+//                }
+//            }
             
             root.unmakePly(x);
             
@@ -876,7 +878,6 @@ class ConnectFourNegamaxSearchEngine {
         
         for (const x of PLIES) {
             if (!root.makePly(x, color === 1 ? O : X)) {
-                
                 continue;
             }
             
@@ -947,18 +948,23 @@ class ConnectFourPrincipalVariationSearchEngine {
                                      -beta,
                                      -alpha,
                                      -color);
-                               
-            if (color === +1) {
-                if (value < score) {
-                    value = score;
-                    bestMoveState = new ConnectFourBoard(root);
-                }
-            } else {
-                if (value > score) {
-                    value = score;
-                    bestMoveState = new ConnectFourBoard(root);
-                }
+                                     
+            if (value < score) {
+                value = score;
+                bestMoveState = new ConnectFourBoard(root);
             }
+                               
+//            if (color === +1) {
+//                if (value < score) {
+//                    value = score;
+//                    bestMoveState = new ConnectFourBoard(root);
+//                }
+//            } else {
+//                if (value > score) {
+//                    value = score;
+//                    bestMoveState = new ConnectFourBoard(root);
+//                }
+//            }
             
             root.unmakePly(x);
             
@@ -985,10 +991,7 @@ class ConnectFourPrincipalVariationSearchEngine {
         let isFirstState = true;
         
         for (const x of PLIES) {
-            if (!root.makePly(
-                    x, 
-                    color === 1 ? O : X)) {
-
+            if (!root.makePly(x, color === 1 ? O : X)) {
                 continue;
             }
             
