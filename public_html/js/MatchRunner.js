@@ -44,6 +44,10 @@ class MatchRunner {
         this.#outputDiv.innerHTML = "";
     }
     
+    scrollOutput() {
+        this.#outputDiv.scrollTo(0, this.#outputDiv.scrollHeight);
+    }
+    
     getTotalDurationX() {
         return this.#totalDurationX;
     }
@@ -54,7 +58,7 @@ class MatchRunner {
     
     #gameLoop() {
         if (!this.#keepRunning) {
-            window.scrollTo(0, document.body.scrollHeight);
+            this.scrollOutput();
             return;
         }
         
@@ -93,7 +97,7 @@ class MatchRunner {
             this.#outputDiv.insertAdjacentHTML("beforeend",
                 `RESULT: It's a tie.<br/>${this.#getDurationReport()}`
             );
-            window.scrollTo(0, document.body.scrollHeight);
+            this.scrollOutput();
             return;
         }
         
@@ -103,7 +107,7 @@ class MatchRunner {
                 this.#outputDiv.insertAdjacentHTML("beforeend",
                     `RESULT: ${this.#currentEngineTurn.getName()} (X) won.<br/>${this.#getDurationReport()}`
                 );
-                window.scrollTo(0, document.body.scrollHeight);
+                this.scrollOutput();
                 return;
             }
         } else {
@@ -112,7 +116,7 @@ class MatchRunner {
                 this.#outputDiv.insertAdjacentHTML("beforeend",
                     `RESULT: ${this.#currentEngineTurn.getName()} (O) won.<br/>${this.#getDurationReport()}`
                 );
-                window.scrollTo(0, document.body.scrollHeight);
+                this.scrollOutput();
                 return;
             }
         }
@@ -120,7 +124,7 @@ class MatchRunner {
         this.#flipCurrentEngineTurn();
         this.#flipDepth();
         
-        window.scrollTo(0, document.body.scrollHeight);
+        this.scrollOutput();
         window.requestAnimationFrame(() => this.#gameLoop());
     }
     
