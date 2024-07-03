@@ -35,7 +35,9 @@ class MatchRunner {
     
     halt() {
         this.#keepRunning = false;
-        this.#outputDiv.innerHTML += "Match halted! Stopping prematurely...";
+        this.#outputDiv.insertAdjacentHTML("beforeend",
+            "Match halted! Stopping prematurely..."
+        );
     }
     
     clearOutput() {
@@ -73,26 +75,24 @@ class MatchRunner {
             this.#totalDurationO += duration;
         }
         
-        this.#outputDiv.innerHTML += this.#currentState.toString();
-        this.#outputDiv.innerHTML += "<br/>";
+        this.#outputDiv.insertAdjacentHTML("beforeend",
+            `${this.#currentState.toString()}<br/>`
+        );
         
         const turnEngineName = this.#getCurrentEngineName();
         const turnNumeral = this.#getTurnNumberString();;
         
-        this.#outputDiv.innerHTML += 
-                    turnEngineName 
-                            + " made the "
-                            + turnNumeral 
-                            + " turn, duration: "
-                            + (endTime - startTime) 
-                            + " milliseconds.<br/>"
+        this.#outputDiv.insertAdjacentHTML("beforeend",
+            `${turnEngineName} made the ${turnNumeral} turn, duration: ${endTime - startTime} milliseconds.<br/>`
+        );
         
         this.#currentTurnNumber++;
         
         if (this.#currentState.isTie()) {
             this.#keepRunning = false;
-            this.#outputDiv.innerHTML += "RESULT: It's a tie.<br/>";
-            this.#outputDiv.innerHTML += this.#getDurationReport();
+            this.#outputDiv.insertAdjacentHTML("beforeend",
+                `RESULT: It's a tie.<br/>${this.#getDurationReport()}`
+            );
             window.scrollTo(0, document.body.scrollHeight);
             return;
         }
@@ -100,26 +100,18 @@ class MatchRunner {
         if (this.#currentEngineTurn === this.#engineX) {
             if (this.#currentState.isWinningFor(MatchRunner.#X)) {
                 this.#keepRunning = false;
-                
-                this.#outputDiv.innerHTML += 
-                        "RESULT: " 
-                        + this.#currentEngineTurn.getName() 
-                        + " (X) won.<br/>";
-                
-                this.#outputDiv.innerHTML += this.#getDurationReport();
+                this.#outputDiv.insertAdjacentHTML("beforeend",
+                    `RESULT: ${this.#currentEngineTurn.getName()} (X) won.<br/>${this.#getDurationReport()}`
+                );
                 window.scrollTo(0, document.body.scrollHeight);
                 return;
             }
         } else {
             if (this.#currentState.isWinningFor(MatchRunner.#O)) {
                 this.#keepRunning = false;
-                
-                this.#outputDiv.innerHTML += 
-                        "RESULT: " 
-                        + this.#currentEngineTurn.getName() 
-                        + " (O) won.<br/>";
-                
-                this.#outputDiv.innerHTML += this.#getDurationReport();
+                this.#outputDiv.insertAdjacentHTML("beforeend",
+                    `RESULT: ${this.#currentEngineTurn.getName()} (O) won.<br/>${this.#getDurationReport()}`
+                );
                 window.scrollTo(0, document.body.scrollHeight);
                 return;
             }
