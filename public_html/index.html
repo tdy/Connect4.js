@@ -8,71 +8,75 @@
         <link href="css/connect4.css" rel="stylesheet">
     </head>
     <body class="d-flex flex-column h-100">
-        <form class="row bg-light border-bottom gy-2 gx-4 p-2">
-            <div class="col-12 d-flex align-items-center gap-1 mb-1">
-                <h1 class="h4 d-inline fw-bold mb-0 me-2">AI Connect 4: X vs O</h1>
-                <button class="btn btn-sm btn-dark" type="button" onclick="runMatch();">Run match</button>
-                <button class="btn btn-sm btn-outline-dark" type="button" onclick="haltMatch();">Halt match</button>
-                <button class="btn btn-sm btn-outline-dark" type="button" onclick="clearOutput();">Clear output</button>
+        <form class="d-flex align-items-center bg-light border-bottom gx-4 p-2">
+            <div class="d-flex flex-column justify-content-center justify-content-md-between gap-1 h-100">
+                <h1 class="h5 text-nowrap fw-bold mb-0 me-3">AI Connect 4: X vs O</h1>
+                <div>
+                    <button class="btn btn-sm btn-dark" type="button" onclick="runMatch();">Run</button>
+                    <button class="btn btn-sm btn-outline-dark" type="button" onclick="haltMatch();">Halt</button>
+                    <button class="btn btn-sm btn-outline-dark" type="button" onclick="clearOutput();">Clear</button>
+                </div>
             </div>
-            <div class="col-md-6">
-                <div class="row g-2">
-                    <div class="col-8">
-                        <div class="form-floating">
-                            <select class="form-select" name="xEngine" id="xEngineId">
-                                <option value="alpha-beta">Alpha-beta pruning</option>
-                                <option value="negamax">Negamax</option>
-                                <option value="pvs">PVS (Principal Variation Search)</option>
-                            </select>
-                            <label for="xEngineId">X engine</label>
+            <div class="row flex-grow-1 gy-2">
+                <div class="col-md-6">
+                    <div class="row gx-2">
+                        <div class="col-8">
+                            <div class="form-floating">
+                                <select class="form-select" name="xEngine" id="xEngineId">
+                                    <option value="alpha-beta">Alpha-beta pruning</option>
+                                    <option value="negamax">Negamax</option>
+                                    <option value="pvs">PVS (Principal Variation Search)</option>
+                                </select>
+                                <label for="xEngineId">X engine</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-floating">
-                            <select class="form-select" name="xEngineDepth" id="xEngineDepthId">
-                                <option value="1">Depth 1</option>
-                                <option value="2">Depth 2</option>
-                                <option value="3">Depth 3</option>
-                                <option value="4">Depth 4</option>
-                                <option value="5">Depth 5</option>
-                                <option value="6">Depth 6</option>
-                                <option value="7">Depth 7</option>
-                                <option value="8" selected>Depth 8</option>
-                                <option value="9">Depth 9</option>
-                                <option value="10">Depth 10</option>
-                            </select>
-                            <label for="xEngineDepthId">X depth</label>
+                        <div class="col-4">
+                            <div class="form-floating">
+                                <select class="form-select" name="xEngineDepth" id="xEngineDepthId">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8" selected>8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <label for="xEngineDepthId">X depth</label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="row g-2">
-                    <div class="col-8">
-                        <div class="form-floating">
-                            <select class="form-select" name="oEngine" id="oEngineId">
-                                <option value="alpha-beta">Alpha-beta pruning</option>
-                                <option value="negamax">Negamax</option>
-                                <option value="pvs">PVS (Principal Variation Search)</option>
-                            </select>
-                            <label for="oEngineId">O engine</label>
+                <div class="col-md-6">
+                    <div class="row gx-2">
+                        <div class="col-8">
+                            <div class="form-floating">
+                                <select class="form-select" name="oEngine" id="oEngineId">
+                                    <option value="alpha-beta">Alpha-beta pruning</option>
+                                    <option value="negamax">Negamax</option>
+                                    <option value="pvs">PVS (Principal Variation Search)</option>
+                                </select>
+                                <label for="oEngineId">O engine</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-floating">
-                            <select class="form-select" name="oEngineDepth" id="oEngineDepthId">
-                                <option value="1">Depth 1</option>
-                                <option value="2">Depth 2</option>
-                                <option value="3">Depth 3</option>
-                                <option value="4">Depth 4</option>
-                                <option value="5">Depth 5</option>
-                                <option value="6">Depth 6</option>
-                                <option value="7">Depth 7</option>
-                                <option value="8" selected>Depth 8</option>
-                                <option value="9">Depth 9</option>
-                                <option value="10">Depth 10</option>
-                            </select>
-                            <label for="oEngineDepthId">O depth</label>
+                        <div class="col-4">
+                            <div class="form-floating">
+                                <select class="form-select" name="oEngineDepth" id="oEngineDepthId">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8" selected>8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <label for="oEngineDepthId">O depth</label>
+                            </div>
                         </div>
                     </div>
                 </div>
