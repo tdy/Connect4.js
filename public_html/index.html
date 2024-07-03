@@ -10,20 +10,22 @@
     </head>
     <body class="d-flex flex-column h-100">
         <form class="d-flex align-items-center bg-light border-bottom gx-4 p-2">
-            <div class="d-flex flex-column justify-content-center justify-content-md-between gap-1 h-100">
-                <h1 class="h5 text-nowrap fw-bold mb-0 me-3">AI Connect 4: X vs O</h1>
+            <div class="d-flex flex-column justify-content-center gap-2 h-100">
+                <h1 class="h6 text-nowrap fw-bold lh-1 mb-0 me-3">
+                    AI Connect 4<span class="d-none d-md-inline">:</span><span class="d-block d-md-inline"> X vs O</span>
+                </h1>
                 <div>
                     <div class="btn-group">
-                        <button class="btn btn-sm btn-primary border-2 px-3" type="button" onclick="runMatch();">
+                        <button class="btn btn-sm btn-primary border-1 px-md-3" type="button" onclick="runMatch();">
                             <i class="bi-play-fill" aria-hidden="true"></i>
-                            Run
+                            <span class="d-none d-md-inline">Run</span>
                         </button>
-                        <button class="btn btn-sm btn-outline-primary border-2" type="button" onclick="haltMatch();">
+                        <button class="btn btn-sm btn-outline-primary border-1" type="button" onclick="haltMatch();">
                             <i class="bi-stop-fill" aria-hidden="true"></i>
                             <span class="visually-hidden">Halt</span>
                         </button>
                     </div>
-                    <button class="btn btn-sm btn-outline-dark border-2" type="button" onclick="clearOutput();">
+                    <button class="btn btn-sm btn-outline-dark border-1" type="button" onclick="clearOutput();">
                         <i class="bi-trash-fill" aria-hidden="true"></i>
                         <span class="visually-hidden">Clear</span>
                     </button>
