@@ -4,6 +4,7 @@
         <title>AI Connect 4</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link href="css/connect4.css" rel="stylesheet">
     </head>
@@ -12,9 +13,20 @@
             <div class="d-flex flex-column justify-content-center justify-content-md-between gap-1 h-100">
                 <h1 class="h5 text-nowrap fw-bold mb-0 me-3">AI Connect 4: X vs O</h1>
                 <div>
-                    <button class="btn btn-sm btn-dark" type="button" onclick="runMatch();">Run</button>
-                    <button class="btn btn-sm btn-outline-dark" type="button" onclick="haltMatch();">Halt</button>
-                    <button class="btn btn-sm btn-outline-dark" type="button" onclick="clearOutput();">Clear</button>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-primary border-2 px-3" type="button" onclick="runMatch();">
+                            <i class="bi-play-fill" aria-hidden="true"></i>
+                            Run
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary border-2" type="button" onclick="haltMatch();">
+                            <i class="bi-stop-fill" aria-hidden="true"></i>
+                            <span class="visually-hidden">Halt</span>
+                        </button>
+                    </div>
+                    <button class="btn btn-sm btn-outline-dark border-2" type="button" onclick="clearOutput();">
+                        <i class="bi-trash-fill" aria-hidden="true"></i>
+                        <span class="visually-hidden">Clear</span>
+                    </button>
                 </div>
             </div>
             <div class="row flex-grow-1 gy-2">
