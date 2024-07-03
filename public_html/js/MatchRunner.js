@@ -80,21 +80,13 @@ class MatchRunner {
         const turnNumeral = this.#getTurnNumberString();;
         
         this.#outputDiv.innerHTML += 
-                this.#currentEngineTurn === this.#engineX ? 
                     turnEngineName 
                             + " made the "
                             + turnNumeral 
                             + " turn, duration: "
                             + (endTime - startTime) 
                             + " milliseconds.<br/>"
-                    :
-                    turnEngineName
-                            + " made the "
-                            + turnNumeral
-                            + " turn, duration: "
-                            + (endTime - startTime)
-                            + " milliseconds.<br/>";
-                    
+        
         this.#currentTurnNumber++;
         
         if (this.#currentState.isTie()) {
