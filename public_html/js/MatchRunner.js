@@ -87,7 +87,7 @@ class MatchRunner {
         const turnNumeral = this.#getTurnNumberString();;
         
         this.#outputDiv.insertAdjacentHTML("beforeend",
-            `${turnEngineName} made the ${turnNumeral} turn, duration: ${endTime - startTime} milliseconds.<br/>`
+            `${turnEngineName} made the ${turnNumeral} turn, duration: ${endTime - startTime} milliseconds.<br/><br/>`
         );
         
         this.#currentTurnNumber++;
