@@ -1,17 +1,3 @@
 #output-text-div {
-    font-family: monospace;
-    font-size: 15pt;
-}
-
-.paramDivs {
-    display: inline-block;
-    border-width: 2px;
-    border-color: black;
-    border-style: solid;
-    margin: 5px;
-    padding: 5px;
-}
-
-#runButton {
-    text-align: center;
+    white-space: pre-wrap;
 }
