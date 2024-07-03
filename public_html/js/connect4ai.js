@@ -223,7 +223,7 @@ class ConnectFourBoard {
                 return "<span style='color: blue;'>X</span>";
                 
             case O:
-                return "<span style='color: red;'>O</span>";
+                return "<span style='color: crimson;'>O</span>";
                 
             case EMPTY:
                 return " ";
